@@ -36,9 +36,9 @@ class SignInView(TemplateView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            email = form.cleaned_data["email"]
+            username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
-            user = authenticate(request, email=email, password=password)
+            user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
                 return redirect("customer_home")
