@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
-from customer import forms
+from .forms import RegistrationForm, LoginForm
 
 
 class RegistrationView(TemplateView):
-    form_class = forms.RegistrationForm
+    form_class = RegistrationForm
     template_name = "registration.html"
     model = User
     context = {}
@@ -25,7 +25,7 @@ class RegistrationView(TemplateView):
 
 class SignInView(TemplateView):
     template_name = "login.html"
-    form_class = forms.LoginForm
+    form_class = LoginForm
     context = {}
 
     def get(self, request, *args, **kwargs):
