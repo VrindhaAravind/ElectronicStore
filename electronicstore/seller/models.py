@@ -12,3 +12,22 @@ class Seller_Details(models.Model):
     ifsc_code = models.CharField(max_length=20)
 
 
+
+
+class Products(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=250)
+    image = models.ImageField(upload_to='images')
+    description = models.TextField()
+    price = models.FloatField()
+    stock = models.IntegerField()
+    category = models.CharField(max_length=50)
+    brand = models.CharField(max_length=50)
+    ram = models.CharField(max_length=50)
+    storage = models.CharField(max_length=50)
+    color = models.CharField(max_length=50)
+    offer = models.FloatField()
+
+    def __str__(self):
+
+        return self.product_name
