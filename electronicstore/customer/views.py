@@ -2,10 +2,10 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login
 from django.views.generic import TemplateView
-from customer import forms
+from customer.forms import RegistrationForm,LoginForm
 
 class RegistrationView(TemplateView):
-    form_class=forms.RegistrationForm
+    form_class=RegistrationForm
     template_name="registration.html"
     model=User
     context={}
@@ -19,12 +19,14 @@ class RegistrationView(TemplateView):
         form=self.form_class(request.POST)
         if form.is_valid():
             form.save()
+
             return redirect("cust_signin")
+
 
 
 class SignInView(TemplateView):
     template_name="login.html"
-    form_class=forms.LoginForm
+    form_class=LoginForm
     context={}
 
     def get(self,request,*args,**kwargs):
@@ -44,3 +46,8 @@ class SignInView(TemplateView):
             else:
                 self.context["form"]=form
                 return render(request,self.template_name,self.context)
+
+class HomePageView(TemplateView):
+    template_name = 'homepage.html'
+    def get(self, request, *args, **kwargs):
+        return render(request,self.template_name)
