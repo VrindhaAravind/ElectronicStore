@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 from .forms import RegistrationForm, LoginForm
 
 
-lass RegistrationView(TemplateView):
+class RegistrationView(TemplateView):
     form_class = RegistrationForm
     template_name = "registration.html"
     model = User
