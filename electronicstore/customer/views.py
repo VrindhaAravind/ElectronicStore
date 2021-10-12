@@ -2,33 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
-<<<<<<< HEAD
 from .forms import RegistrationForm, LoginForm
 
 
-class RegistrationView(TemplateView):
+lass RegistrationView(TemplateView):
     form_class = RegistrationForm
-=======
-from customer.forms import RegistrationForm,LoginForm
-
-
-class RegistrationView(TemplateView):
-<<<<<<< HEAD
-    form_class=RegistrationForm
-    template_name="registration.html"
-    model=User
-    context={}
-
-    def get(self,request,*args,**kwargs):
-        form=self.form_class()
-        self.context["form"]=form
-        return render(request,self.template_name,self.context)
-
-    def post(self,request,*args,**kwargs):
-        form=self.form_class(request.POST)
-=======
-    form_class = forms.RegistrationForm
->>>>>>> 414567940a4462c77ac66687642f1a61bc954d38
     template_name = "registration.html"
     model = User
     context = {}
@@ -40,24 +18,15 @@ class RegistrationView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
->>>>>>> 1b5d59eb531923428a3327cace5c5c696dd49e79
         if form.is_valid():
             form.save()
-
             return redirect("cust_signin")
 
 
-
 class SignInView(TemplateView):
-<<<<<<< HEAD
-    template_name="login.html"
-    form_class=LoginForm
-    context={}
-=======
     template_name = "login.html"
     form_class = LoginForm
     context = {}
->>>>>>> 1b5d59eb531923428a3327cace5c5c696dd49e79
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
@@ -74,20 +43,18 @@ class SignInView(TemplateView):
                 login(request, user)
                 return redirect("customer_home")
             else:
-<<<<<<< HEAD
-                self.context["form"]=form
-                return render(request,self.template_name,self.context)
+                self.context["form"] = form
+                return render(request, self.template_name, self.context)
+
 
 class HomePageView(TemplateView):
     template_name = 'homepage.html'
+
     def get(self, request, *args, **kwargs):
-        return render(request,self.template_name)
-=======
-                self.context["form"] = form
-                return render(request, self.template_name, self.context)
+        return render(request, self.template_name)
 
 
 def signout(request):
     logout(request)
     return redirect("signin")
->>>>>>> 1b5d59eb531923428a3327cace5c5c696dd49e79
+
