@@ -50,9 +50,8 @@ class SignInView(TemplateView):
 
 class HomePageView(TemplateView):
     template_name = 'homepage.html'
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+    model = Products
+    context_object_name = "products"
 
 
 def signout(request):
