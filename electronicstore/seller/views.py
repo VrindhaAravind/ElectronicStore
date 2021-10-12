@@ -7,8 +7,8 @@ from .models import Seller_Details
 # Create your views here.
 
 def register(request):
-    user_form = UserForm(request.POST)
-    profile_form = ProfileForm(request.POST)
+    user_form = UserForm(request.POST or None)
+    profile_form = ProfileForm(request.POST or None)
     if request.method == "POST":
         
         
