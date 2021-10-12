@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 
 class Seller_Details(models.Model):
 
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    username = models.CharField(max_length=100)
     address = models.TextField()
     bank_name = models.CharField(max_length=100)
     account_number = models.IntegerField()
