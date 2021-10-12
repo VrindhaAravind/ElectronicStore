@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Seller_Details
+from .models import Seller_Details,Products
 
 class UserForm(UserCreationForm):
     username = forms.CharField(max_length=15, widget=(
@@ -33,3 +33,46 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Seller_Details
         fields = ['address','bank_name','account_number','ifsc_code']
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=15, widget=(
+        forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Username'})))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
+
+
+class ProductAddForm(forms.ModelForm):
+
+    class Meta:
+        model = Products
+        exclude = ('user',)
+
+        category_options = [
+            ('mobile','Mobile'),
+            ('laptop','Laptop'),
+            ('tablet','Tablet')
+        ]
+        
+        brand_names = [
+            ('apple','Apple'),
+            ('samsung', 'Samsung'),
+            ('oneplus', 'OnePlus'),
+            ('redmi','Redmi'),
+            ('oppo', 'OPPO'),
+            ('lenovo', 'Lenovo')
+            
+        ]
+
+        widgets = {
+            'product_name':forms.TextInput(attrs={'class':'from-control'}),
+            'category':forms.Select(choices=category_options),
+            'brand': forms.Select(choices=brand_names,attrs={'class': 'from-control'}),
+            
+            'description': forms.TextInput(attrs={'class': 'from-control'}),
+            'price': forms.NumberInput(attrs={'class': 'from-control'}),
+            'stock': forms.NumberInput(attrs={'class': 'from-control'}),
+            'ram': forms.TextInput(attrs={'class': 'from-control'}),
+            'storage': forms.TextInput(attrs={'class': 'from-control'}),
+            'color': forms.TextInput(attrs={'class': 'from-control'}),
+            'offer': forms.NumberInput(attrs={'class': 'from-control'})
+        }
