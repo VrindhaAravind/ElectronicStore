@@ -2,16 +2,23 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+Role_Choices=(
+    ('admin','ADMIN'),
+    ('seller','Seller'),
+    ('customer','Customer')
+)
 
 class Seller_Details(models.Model):
 
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    address = models.TextField()
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    username=models.CharField(max_length=100)
     bank_name = models.CharField(max_length=100)
     account_number = models.IntegerField()
     ifsc_code = models.CharField(max_length=20)
 
-
+class User_Role(models.Model):
+    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    role=models.CharField(max_length=10,choices=Role_Choices,default='customer')
 
 
 class Products(models.Model):
