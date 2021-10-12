@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
 from .forms import RegistrationForm, LoginForm,UpdateForm
-
+from customer.models import Cart
+from seller.models import Products
 
 
 class RegistrationView(TemplateView):
@@ -50,9 +51,11 @@ class SignInView(TemplateView):
 
 class HomePageView(TemplateView):
     template_name = 'homepage.html'
-
+    context={}
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        products = Products.objects.all()
+        self.context['products']=products
+        return render(request, self.template_name,self.context)
 
 
 def signout(request):
@@ -67,9 +70,41 @@ def update_details(request):
         return render(request, "user_details.html", context)
     elif request.method == "POST":
         form = UpdateForm(request.POST, request.FILES)
-        if form.is_valid() :
+        if form.is_valid():
             form.save()
             return redirect("customer_home")
         else:
             context = {"form": form}
             return render(request, "user_details.html", context)
+
+
+class ViewProduct(TemplateView):
+    template_name = 'productdetail.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        id=kwargs['pk']
+        product=Products.objects.get(id=id)
+        self.context['product']=product
+        return render(request,self.template_name,self.context)
+
+def add_to_cart(request,*args,**kwargs):
+    id=kwargs['pk']
+    product=Products.objects.get(id=id)
+    cart=Cart(product=product,user=request.user)
+    cart.save()
+    return redirect('mycart')
+
+class MyCart(TemplateView):
+    template_name = 'cart.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        cart_products=Cart.objects.filter(user=request.user,status='ordernotplaced')
+        self.context['cart_products']=cart_products
+        return render(request,self.template_name,self.context)
+
+class DeleteFromCart(TemplateView):
+    def get(self, request, *args, **kwargs):
+        id=kwargs['pk']
+        cart_product=Cart.objects.get(id=id)
+        cart_product.delete()
+        return redirect('mycart')
