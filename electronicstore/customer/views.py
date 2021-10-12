@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm,UpdateForm
+
 
 
 class RegistrationView(TemplateView):
@@ -58,3 +59,17 @@ def signout(request):
     logout(request)
     return redirect("signin")
 
+def update_details(request):
+    # detail=Userdetails.objects.get()
+    form = UpdateForm()
+    if request.method == "GET":
+        context = {"form": form}
+        return render(request, "user_details.html", context)
+    elif request.method == "POST":
+        form = UpdateForm(request.POST, request.FILES)
+        if form.is_valid() :
+            form.save()
+            return redirect("customer_home")
+        else:
+            context = {"form": form}
+            return render(request, "user_details.html", context)
