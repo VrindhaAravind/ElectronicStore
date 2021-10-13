@@ -127,7 +127,8 @@ def place_order(request,*args,**kwargs):
         if form.is_valid():
             address=form.cleaned_data.get("address")
             product=product
-            order=Orders(address=address,product=product,user=request.user)
+            order=Orders(address=address,product=product,user=request.user,seller=product.user.username)
+            print(product.user.username)
             order.save()
             cart.status="orderplaced"
             cart.save()
