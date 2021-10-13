@@ -17,3 +17,9 @@ class Cart(models.Model):
              ("orderplaced","orderplaced")
              )
     status=models.CharField(max_length=120,choices=options,default="ordernotplaced")
+    
+class Review(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    review=models.CharField(max_length=500)
+    date=models.DateField(auto_now=True)
