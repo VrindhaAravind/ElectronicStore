@@ -27,7 +27,7 @@ class ProfileForm(forms.ModelForm):
     account_number = forms.CharField(max_length=50,
                                 widget=(forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Account-Number'})))
     ifsc_code = forms.CharField(max_length=15,
-                                     widget=(forms.TextInput( attrs={'class': 'form-control', 'placeholder': 'Enter IDSC Code'})))
+                                     widget=(forms.TextInput( attrs={'class': 'form-control', 'placeholder': 'Enter IFSC Code'})))
 
 
     class Meta:
@@ -59,20 +59,28 @@ class ProductAddForm(forms.ModelForm):
             ('oneplus', 'OnePlus'),
             ('redmi','Redmi'),
             ('oppo', 'OPPO'),
-            ('lenovo', 'Lenovo')
+            ('lenovo', 'Lenovo'),
+            ('hp', 'HP'),
+            ('dell', 'Dell'),
+            ('azus', 'Azus'),
+            
             
         ]
 
         widgets = {
-            'product_name':forms.TextInput(attrs={'class':'from-control'}),
-            'category':forms.Select(choices=category_options),
-            'brand': forms.Select(choices=brand_names,attrs={'class': 'from-control'}),
+            'product_name':forms.TextInput(attrs={'class':'form-control'}),
+            'category':forms.Select(choices=category_options,attrs={'class':'form-control'}),
+            'brand': forms.Select(choices=brand_names,attrs={'class': 'form-control',}),
             
-            'description': forms.TextInput(attrs={'class': 'from-control'}),
-            'price': forms.NumberInput(attrs={'class': 'from-control'}),
-            'stock': forms.NumberInput(attrs={'class': 'from-control'}),
-            'ram': forms.TextInput(attrs={'class': 'from-control'}),
-            'storage': forms.TextInput(attrs={'class': 'from-control'}),
-            'color': forms.TextInput(attrs={'class': 'from-control'}),
-            'offer': forms.NumberInput(attrs={'class': 'from-control'})
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'ram': forms.TextInput(attrs={'class': 'form-control'}),
+            'storage': forms.TextInput(attrs={'class': 'form-control'}),
+            'color': forms.TextInput(attrs={'class': 'form-control'}),
+            'offer': forms.NumberInput(attrs={'class': 'form-control'})
+        }
+        
+        labels = {
+            'product_name':'Product Name'
         }

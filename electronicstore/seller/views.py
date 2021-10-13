@@ -26,7 +26,7 @@ def register(request):
             profile.username = user.username
             profile.save()
             
-            return redirect('base')
+            return redirect('seller_login')
         
         else:
             
@@ -100,5 +100,15 @@ def add_product(request):
             messages.error(request,'Failed to add')
             return render(request,'add_product.html',context)
     return render(request, 'add_product.html', context)
-            
-    
+
+
+def product_list(request):
+    s=request.user
+    print(s)
+    # products = models.Products.objects.all()
+    products=models.Products.objects.filter(user=request.user)
+    # for i in products:
+    #     print(i.image.url)
+
+    return render(request,'seller_view_product.html',{'products':products})
+
