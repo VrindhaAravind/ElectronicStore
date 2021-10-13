@@ -35,3 +35,6 @@ class LoginForm(forms.Form):
             "dob": forms.DateInput(attrs={"class": "form-control", "placeholder": "yyyy-mm-dd"}),
             "image": forms.FileInput(attrs={"class": "form-control"}),
         }
+        
+class ReviewForm(forms.Form):
+    review=forms.CharField(widget=forms.Textarea())
