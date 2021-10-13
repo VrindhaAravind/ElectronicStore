@@ -77,3 +77,35 @@ def update_details(request):
         else:
             context = {"form": form}
             return render(request, "user_details.html", context)
+        
+       
+class ViewProduct(TemplateView):
+    template_name = 'productdetail.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        id=kwargs['pk']
+        product=Products.objects.get(id=id)
+        self.context['product']=product
+        return render(request,self.template_name,self.context)
+
+def add_to_cart(request,*args,**kwargs):
+    id=kwargs['pk']
+    product=Products.objects.get(id=id)
+    cart=Cart(product=product,user=request.user)
+    cart.save()
+    return redirect('mycart')
+
+class MyCart(TemplateView):
+    template_name = 'cart.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        cart_products=Cart.objects.filter(user=request.user,status='ordernotplaced')
+        self.context['cart_products']=cart_products
+        return render(request,self.template_name,self.context)
+
+class DeleteFromCart(TemplateView):
+    def get(self, request, *args, **kwargs):
+        id=kwargs['pk']
+        cart_product=Cart.objects.get(id=id)
+        cart_product.delete()
+        return redirect('mycart')
