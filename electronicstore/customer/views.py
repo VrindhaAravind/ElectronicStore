@@ -85,7 +85,9 @@ class ViewProduct(TemplateView):
     def get(self, request, *args, **kwargs):
         id=kwargs['pk']
         product=Products.objects.get(id=id)
+        reviews=Review.objects.filter(product=product)
         self.context['product']=product
+        self.context['reviews']=reviews
         return render(request,self.template_name,self.context)
 
 def add_to_cart(request,*args,**kwargs):
@@ -109,3 +111,21 @@ class DeleteFromCart(TemplateView):
         cart_product=Cart.objects.get(id=id)
         cart_product.delete()
         return redirect('mycart')
+
+class WriteReview(TemplateView):
+    template_name = 'review.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        form=ReviewForm()
+        self.context['form']=form
+        return render(request,self.template_name,self.context)
+
+    def post(self,request,*args,**kwargs):
+        id=kwargs['pk']
+        product=Products.objects.get(id=id)
+        form=ReviewForm(request.POST)
+        if form.is_valid():
+            review=form.cleaned_data.get('review')
+            new_review=Review(user=request.user,product=product,review=review)
+            new_review.save()
+            return redirect('viewproduct',product.id)
