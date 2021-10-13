@@ -35,3 +35,7 @@ class UpdateForm(ModelForm):
             "dob": forms.DateInput(attrs={"class": "form-control", "placeholder": "yyyy-mm-dd"}),
             "image": forms.FileInput(attrs={"class": "form-control"}),
         }
+
+class PlaceOrderForm(forms.Form):
+    address=forms.CharField(widget=forms.Textarea(attrs={'class':"form-control"}))
+    product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))

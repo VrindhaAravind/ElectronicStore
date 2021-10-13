@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
-from .forms import RegistrationForm, LoginForm,UpdateForm
-from customer.models import Cart
+from .forms import RegistrationForm, LoginForm,UpdateForm,PlaceOrderForm
+from customer.models import Cart,Orders
 from seller.models import Products
 
 
@@ -108,3 +108,44 @@ class DeleteFromCart(TemplateView):
         cart_product=Cart.objects.get(id=id)
         cart_product.delete()
         return redirect('mycart')
+
+def place_order(request,*args,**kwargs):
+    id=kwargs.get("id")
+    product=Products.objects.get(id=id)
+    instance={
+        "product":product.product_name
+    }
+    form=PlaceOrderForm(initial=instance)
+    context={}
+    context["form"]=form
+
+    if request.method=="POST":
+        cid=kwargs.get("cid")
+        cart=Cart.objects.get(id=cid)
+
+        form=PlaceOrderForm(request.POST)
+        if form.is_valid():
+            address=form.cleaned_data.get("address")
+            product=product
+            order=Orders(address=address,product=product,user=request.user)
+            order.save()
+            cart.status="orderplaced"
+            cart.save()
+            return redirect("customer_home")
+
+    return render(request,"placeorder.html",context)
+
+def view_orders(request,*args,**kwargs):
+    orders=Orders.objects.filter(user=request.user,status="ordered")
+
+    context={
+        "orders":orders,
+    }
+    return render(request,"vieworders.html",context)
+
+def cancel_order(request,*args,**kwargs):
+    id=kwargs.get("id")
+    order=Orders.objects.get(id=id)
+    order.status="cancelled"
+    order.save()
+    return redirect("vieworders")
