@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
 from .forms import RegistrationForm, LoginForm,UpdateForm
+from .models import Cart
+from seller.models import Products
+from .decorators import signin_required
+from django.utils.decorators import method_decorator
 
 
 
@@ -47,17 +51,18 @@ class SignInView(TemplateView):
                 self.context["form"] = form
                 return render(request, self.template_name, self.context)
 
-
+@method_decorator(signin_required,name="dispatch")
 class HomePageView(TemplateView):
     template_name = 'homepage.html'
     model = Products
     context_object_name = "products"
 
-
+@signin_required
 def signout(request):
     logout(request)
     return redirect("signin")
 
+@signin_required
 def update_details(request):
     # detail=Userdetails.objects.get()
     form = UpdateForm()
