@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <title>Edit Product</title>
+</head>
+<body>
+
+    <div class="container" style="width:60%">
+        <h2>Product Details Edit.</h2><br><br>
+        <form action="confirm/" method="post">
+            {%csrf_token%}
+          <div class="form-group">
+            <label for="prod_name">Product Name:</label>
+            <input type="text" class="form-control" id="prod_name"  name="prod_name" value="{{prod.product_name}}" >
+          </div>
+          <div class="form-group">
+            <label for="prod_description">Product Description:</label>
+            <input type="textarea" class="form-control" id="prod_description" placeholder="Enter email" name="prod_description" value='{{prod.description}}'>
+          </div>
+          <div class="form-group">
+            <label for="prod_price">Price:</label>
+            <input type="text" class="form-control" id="prod_price" placeholder="Enter email" name="prod_price" value='{{prod.price}}'>
+          </div>
+          <div class="form-group" style="width:100px">
+            <label for="prod_stock">Stock:</label>
+            <input type="text" class="form-control" id="prod_stock" placeholder="Enter email" name="prod_stock" value='{{prod.stock}}'>
+          </div>
+          <div class="form-group">
+            <label for="prod_ram">RAM:</label>
+            <input type="text" class="form-control" id="prod_ram" placeholder="Enter email" name="prod_ram" value='{{prod.ram}}'>
+          </div>  
+          <div class="form-group">
+            <label for="prod_storage">Storage:</label>
+            <input type="text" class="form-control" id="prod_storage" placeholder="Enter email" name="prod_storage" value='{{prod.storage}}'>
+          </div>  
+          <div class="form-group">Color:</label>
+            <input type="text" class="form-control" id="prod_color" placeholder="Enter email" name="prod_color" value='{{prod.color}}'>
+          </div>
+            <div class="form-group">Offer:</label>
+            <input type="text" class="form-control" id="prod_offer" placeholder="Enter email" name="prod_offer" value='{{prod.offer}}'>
+          </div>
+          <button type="submit" class="btn btn-primary" name="prod_id" value="{{prod.id}}">Submit</button>
+        </form>
+      </div>
+      
+</body>
+<script>
+    $(document).ready(function(){
+          
+                $("#prod_category").change(function(){
+                   alert($('#prod_category').val())
+                   if(('#prod_category').val() == 'Mobile')
+                   {
+
+
+            });
+        });
+</script>
+</html>

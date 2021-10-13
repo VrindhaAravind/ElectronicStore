@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Seller Product View</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Products</h2>
+        <br><br>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Description</th>
+              <th>Images</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Category</th>
+              <th>Brand</th>
+              <th>Ram</th>
+              <th>Storage</th>
+              <th>Color</th>
+              <th>Offer</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for product in products  %}
+            <tr>
+              <td>{{product.product_name}}</td>
+              <td>{{product.description}}</td>
+              <td width="150px">{{prod.image}}</td>
+              <td>{{product.price}}</td>
+              <td>{{product.stock}}</td>
+              <td>{{product.category}}</td>
+              <td>{{product.brand}}</td>
+              <td>{{product.ram}}</td>
+              <td>{{product.storage}}</td>
+              <td>{{product.color}}</td>
+              <td>{{product.offer}}</td>
+
+              <td><form action='edit/'  method='POST' >  {%csrf_token%} <button class="btn btn-info pull-right " name='prod_id'  id={{product.id}} value={{product.id}}>edit</button></form></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+<script>
+    $(document).ready(function(){
+<!--        alert('HY')-->
+        $(".btn").click(function(){
+<!--            alert($(this).val())-->
+    });
+});
+</script>
+
+</body>
+
+</html>
