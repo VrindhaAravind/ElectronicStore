@@ -17,6 +17,19 @@
     <a href="{%url 'addtocart' product.id %}" class="btn btn-primary">Add to Cart</a>
   </div>
 </div>
+<a href="{%url 'review' product.id %}">Write Review</a>
+<h5>Reviews</h5>
+
+{%for review in reviews%}
+<div class="card">
+    <div class="card-body">
+        {{review.user}} {{review.date}}
+        <p>{{review.review}}</p>
+    </div>
+</div>
+
+
+{%endfor%}
 
 </body>
 </html>
