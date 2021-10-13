@@ -59,7 +59,10 @@
               <td>{{product.color}}</td>
               <td>{{product.offer}}</td>
 
-              <td><form action='edit/'  method='POST' >  {%csrf_token%} <button class="btn btn-info pull-right " name='prod_id'  id={{product.id}} value={{product.id}}>Edit</button></form></td>
+<!--              <td><form action='edit/'  method='POST' >  {%csrf_token%} <button class="btn btn-info pull-right " name='prod_id'  id={{product.id}} value={{product.id}}>Edit</button></form></td>-->
+                <td colspan="5">
+                    <a href="{%url 'edit_product' product.id%}"><button>Edit</button></a>
+                </td>
             </tr>
           {% endfor %}
           </tbody>

@@ -1,5 +1,6 @@
 from django.urls import path
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect 
+from . import views
 from .views import register,LoginView,seller_logout,add_product,product_list
 from django.contrib.auth.decorators import login_required
 
@@ -11,6 +12,7 @@ urlpatterns = [
             path('user/logout',login_required(seller_logout,login_url='seller_login'),name='seller_logout'),
             path('product/add',login_required(add_product,login_url='seller_login'),name='add_product'),
             path('products',login_required(product_list,login_url='seller_login'),name='listallproducts'),
+            path('product/change/<int:id>',views.edit_product,name='edit_product')
     
     
 ]

@@ -112,3 +112,22 @@ def product_list(request):
 
     return render(request,'seller_view_product.html',{'products':products})
 
+def get_object(id):
+    return models.Products.objects.get(id=id)
+
+def edit_product(request,id):
+    product = get_object(id)
+    form = ProductAddForm(instance=product)
+
+    context = {'form':form }
+
+    if request.method == "POST":
+        form = ProductAddForm(data=request.POST,files=request.FILES,instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('listallproducts')
+        else:
+            context={'from':form}
+            messages.error(request,"Failed to edit")
+            return render(request,'edit_product.html',context)
+    return render(request, 'edit_product.html', context)
