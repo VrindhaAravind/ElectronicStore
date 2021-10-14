@@ -1,12 +1,13 @@
 from django.shortcuts import render,redirect
-from .forms import UserForm,ProfileForm,LoginForm,ProductAddForm
+from .forms import UserForm,ProfileForm,LoginForm,ProductAddForm,UpdateOrderForm
 from .models import Seller_Details
 from django.contrib.auth import authenticate,logout,login
 from django.contrib.auth.models import User,auth
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView,ListView,UpdateView
 from . import models
 from django.contrib import messages
-
+from customer.models import Orders
+from django.urls import reverse_lazy
 
 
 
@@ -132,3 +133,26 @@ def edit_product(request,id):
             messages.error(request,"Failed to edit")
             return render(request,'edit_product.html',context)
     return render(request, 'edit_product.html', context)
+
+
+class OrderListView(ListView):
+    model = Orders
+    template_name = 'orderlist.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        return self.model.objects.filter(seller=self.request.user).exclude(status='cancelled')
+
+class OrderChangeView(UpdateView):
+    model = Orders
+    template_name = 'orderstatus_update.html'
+    form_class = UpdateOrderForm
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('orderlist')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.kwargs)
+        order = self.model.objects.get(id=self.kwargs['id'])
+        context['order'] = order
+        return context

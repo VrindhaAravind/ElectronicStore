@@ -14,12 +14,12 @@
 
             <div class="row mt-5">
                 <div class="col-4"><h2>My Products</h2></div>
-                <div class="col-4">
+                <div class="col-1">
 
 
 
                 </div>
-                <div class="col-4 text-end">
+                <div class="col-7 text-end">
                     <a href="{%url 'add_product'%}"><button class="btn btn-success">Add Product</button></a>
 
                      <a href="{%url 'base'%}"><button class="btn btn-dark">Back to home</button></a>
@@ -61,7 +61,7 @@
 
 <!--              <td><form action='edit/'  method='POST' >  {%csrf_token%} <button class="btn btn-info pull-right " name='prod_id'  id={{product.id}} value={{product.id}}>Edit</button></form></td>-->
                 <td colspan="5">
-                    <a href="{%url 'edit_product' product.id%}"><button>Edit</button></a>
+                    <a href="{%url 'edit_product' product.id%}"><button class="btn btn-dark">Edit</button></a>
                 </td>
             </tr>
           {% endfor %}

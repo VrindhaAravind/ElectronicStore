@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Seller_Details,Products
+from customer.models import Orders
 
 class UserForm(UserCreationForm):
     username = forms.CharField(max_length=15, widget=(
@@ -84,3 +85,7 @@ class ProductAddForm(forms.ModelForm):
         labels = {
             'product_name':'Product Name'
         }
+class UpdateOrderForm(forms.ModelForm):
+    class Meta:
+        model = Orders
+        fields = ['status']

@@ -169,7 +169,7 @@ def place_order(request,*args,**kwargs):
     return render(request,"placeorder.html",context)
 
 def view_orders(request,*args,**kwargs):
-    orders=Orders.objects.filter(user=request.user,status="ordered")
+    orders=Orders.objects.filter(user=request.user)
 
     context={
         "orders":orders,

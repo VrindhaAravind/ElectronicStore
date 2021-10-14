@@ -12,7 +12,9 @@ urlpatterns = [
             path('user/logout',login_required(seller_logout,login_url='seller_login'),name='seller_logout'),
             path('product/add',login_required(add_product,login_url='seller_login'),name='add_product'),
             path('products',login_required(product_list,login_url='seller_login'),name='listallproducts'),
-            path('product/change/<int:id>',views.edit_product,name='edit_product')
+            path('product/change/<int:id>',views.edit_product,name='edit_product'),
+            path('orders',views.OrderListView.as_view(),name='orderlist'),
+            path('orders/update/<int:id>',views.OrderChangeView.as_view(),name='update_order')
     
     
 ]
