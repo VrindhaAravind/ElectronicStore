@@ -109,7 +109,8 @@ class EditDetails(TemplateView):
         file_data = request.FILES or None
 
         user_form = UserForm(post_data, instance=request.user)
-        profile_form = UpdateForm(post_data, file_data, instance=request.user.profile)
+        profile_form = UpdateForm(post_data, file_data, instance=request.user)
+        #profile_form = UpdateForm(post_data, file_data, instance=request.user.profile)
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
