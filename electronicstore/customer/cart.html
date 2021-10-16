@@ -1,0 +1,25 @@
+{% extends 'cust_base.html'%}
+{%block body_block%}
+<div class="container">
+    <h4>CART ITEMS..</h4>
+    <div class="row">
+        {% for cart in cart_products %}
+        <div class="col-3">
+            <div class="card" style="width: 18rem;">
+                <img src="{{cart.product.image.url}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{cart.product.product_name}}</h5>
+                    <p class="card-text"><i> <b>Rate : </b>{{cart.product.price}}</i><br>
+                        {{cart.product.brand}}<br>
+                        {{cart.product.description}}
+                    </p>
+                    <a href="{% url 'placeorder' cart.product.id cart.id%}" class="btn btn-primary">Buy Now</a>
+                    <a class="btn btn-danger" href="{%url 'deletecart' cart.id %}">Remove</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{%endblock%}
