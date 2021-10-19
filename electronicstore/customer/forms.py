@@ -53,30 +53,27 @@ class UpdateForm(ModelForm):
             "image": forms.FileInput(attrs={"class": "form-control"}),
         }
 
-# class PlaceOrderForm(forms.Form):
+class PlaceOrderForm(forms.Form):
+
+    # address=forms.CharField(widget=forms.Select(attrs={'class':"form-control"}))
+    address = forms.ModelChoiceField(queryset=Address.objects.all(),empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
+    product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
+   
+
+#
+# class PlaceOrderForm(forms.ModelForm):
 #
 #     # address=forms.CharField(widget=forms.Textarea(attrs={'class':"form-control"}))
 #     address = forms.ModelChoiceField(queryset=None,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
 #     product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
-#     def __init__(self,user,*args,**kwargs):
+#     class Meta:
+
+#         model = Orders
+#         fields = ('address','product')
 #
-#             super(PlaceOrderForm,self).__init__(*args,**kwargs)
-#             self.fields['address'].queryset = Address.objects.all().filter(user=user)
-
-
-class PlaceOrderForm(forms.ModelForm):
-
-    # address=forms.CharField(widget=forms.Textarea(attrs={'class':"form-control"}))
-    address = forms.ModelChoiceField(queryset=None,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
-    product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
-    class Meta:
-
-        model = Orders
-        fields = ('address','product')
-
-    def __init__(self,user,*args,**kwargs,):
-        super(PlaceOrderForm,self).__init__(*args,**kwargs)
-        self.fields['address'].queryset = Address.objects.all().filter(user=user)
+#     def __init__(self,user,*args,**kwargs,):
+#         super(PlaceOrderForm,self).__init__(*args,**kwargs)
+#         self.fields['address'].queryset = Address.objects.all().filter(user=user)
 
 
 class UserAddressForm(forms.ModelForm):

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
@@ -147,23 +147,29 @@ def place_order(request,*args,**kwargs):
     instance={
         "product":product.product_name
     }
-    form=PlaceOrderForm(initial=instance,user=request.user)
+    form=PlaceOrderForm(initial=instance)
+
+
     context={}
     context["form"]=form
 
+
     if request.method=="POST":
         cid=kwargs.get("cid")
+
         cart=Cart.objects.get(id=cid)
         
         form=PlaceOrderForm(request.POST,request.user)
         if form.is_valid():
-            address=form.cleaned_data.get("address",user=request.user)
+            address=form.cleaned_data.get("address")
             product=product
             order=Orders(address=address,product=product,user=request.user,seller=product.user.username)
             print(product.user.username)
             order.save()
+            
             cart.status="orderplaced"
             cart.save()
+
             return redirect("customer_home")
 
     return render(request,"placeorder.html",context)
