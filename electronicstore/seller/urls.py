@@ -14,7 +14,8 @@ urlpatterns = [
             path('products',login_required(product_list,login_url='seller_login'),name='listallproducts'),
             path('product/change/<int:id>',views.edit_product,name='edit_product'),
             path('orders',views.OrderListView.as_view(),name='orderlist'),
-            path('orders/update/<int:id>',views.OrderChangeView.as_view(),name='update_order')
+            path('orders/update/<int:id>',views.OrderChangeView.as_view(),name='update_order'),
+            path('orders/count',views.OrderCount.as_view(),name='ordercount')
     
     
 ]

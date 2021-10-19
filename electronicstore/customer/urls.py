@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegistrationView,SignInView,HomePageView,update_details,ViewProduct,add_to_cart,MyCart,DeleteFromCart,WriteReview,place_order,view_orders,cancel_order
+from .views import RegistrationView,SignInView,HomePageView,update_details,ViewProduct,add_to_cart,MyCart,DeleteFromCart,WriteReview,place_order,view_orders,cancel_order,add_address,view_address,edit_address,delete_address
 
 urlpatterns=[
     path('register',RegistrationView.as_view(),name='register'),
@@ -13,7 +13,12 @@ urlpatterns=[
     path('review/<int:pk>',WriteReview.as_view(),name='review'),
     path("placeorder/<int:id>/<int:cid>", place_order, name="placeorder"),
     path("vieworders", view_orders, name="vieworders"),
-    path("removeorder/<int:id>", cancel_order, name="removeorder")
+    path("removeorder/<int:id>", cancel_order, name="removeorder"),
+    path('add_address',add_address,name='add_address'),
+    path('view_address',view_address,name='view_address'),
+    path('address/change/<int:id>',edit_address,name='edit_address'),
+    path('address/delete/<int:id>',delete_address,name='delete_address')
+
 
 
 ]

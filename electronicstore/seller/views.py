@@ -48,7 +48,10 @@ class LoginView(TemplateView):
 
         context = super().get_context_data(**kwargs)
         context['form'] = LoginForm()
+
         return context
+
+
 
     def post(self,request,*args,**kwargs):
 
@@ -152,7 +155,24 @@ class OrderChangeView(UpdateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print(context)
         print(self.kwargs)
         order = self.model.objects.get(id=self.kwargs['id'])
         context['order'] = order
+        return context
+
+class OrderCount(TemplateView):
+    
+    template_name = 'ordercount.html'
+    model = Orders
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        count = self.model.objects.filter(status='delivered').count()
+        context['order_count'] = count
+        context['orders'] = self.model.objects.filter(status='delivered')
+        
+        shipped = self.model.objects.filter(status='shipped')
+        context['orders_shipped'] = shipped
+        context['orders_shipped_count'] = shipped.count()
         return context

@@ -42,3 +42,19 @@ class Review(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     review=models.CharField(max_length=500)
     date=models.DateField(auto_now=True)
+
+
+
+class Address(models.Model):
+
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    name = models.CharField(max_length=150)
+    phone = models.CharField(max_length=50)
+    pin_code = models.CharField(max_length=50)
+    address_line = models.CharField(max_length=255)
+    address_line2 = models.CharField(max_length=255)
+    town_city = models.CharField(max_length=150)
+    delivery_instructions = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name+","+self.address_line+','+self.address_line2+','+self.phone

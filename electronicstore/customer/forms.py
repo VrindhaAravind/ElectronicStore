@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from django.forms import ModelForm
-from .models import Userdetails
+from .models import Userdetails,Address,Orders
 
 
 class RegistrationForm(UserCreationForm):
@@ -53,6 +53,35 @@ class UpdateForm(ModelForm):
             "image": forms.FileInput(attrs={"class": "form-control"}),
         }
 
-class PlaceOrderForm(forms.Form):
-    address=forms.CharField(widget=forms.Textarea(attrs={'class':"form-control"}))
+# class PlaceOrderForm(forms.Form):
+#
+#     # address=forms.CharField(widget=forms.Textarea(attrs={'class':"form-control"}))
+#     address = forms.ModelChoiceField(queryset=None,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
+#     product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
+#     def __init__(self,user,*args,**kwargs):
+#
+#             super(PlaceOrderForm,self).__init__(*args,**kwargs)
+#             self.fields['address'].queryset = Address.objects.all().filter(user=user)
+
+
+class PlaceOrderForm(forms.ModelForm):
+
+    # address=forms.CharField(widget=forms.Textarea(attrs={'class':"form-control"}))
+    address = forms.ModelChoiceField(queryset=None,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
     product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
+    class Meta:
+
+        model = Orders
+        fields = ('address','product')
+
+    def __init__(self,user,*args,**kwargs,):
+        super(PlaceOrderForm,self).__init__(*args,**kwargs)
+        self.fields['address'].queryset = Address.objects.all().filter(user=user)
+
+
+class UserAddressForm(forms.ModelForm):
+
+    class Meta:
+        model = Address
+        fields = ['name','phone','address_line','address_line2','town_city','pin_code']
+
