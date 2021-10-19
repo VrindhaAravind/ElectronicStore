@@ -10,6 +10,7 @@ from .decorators import signin_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.db.models import IntegerField, Case, Value, When
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 class RegistrationView(CreateView):
@@ -52,9 +53,27 @@ def signout(request):
 class HomePageView(ListView):
     template_name = 'homepage.html'
     model = Products
-    context_object_name = "products"
+    paginate_by = 3
+
+    def get_context_data(self, **kwargs):
+        context = super(HomePageView, self).get_context_data(**kwargs)
+        products = Products.objects.all()
+        paginator = Paginator(products, self.paginate_by)
+
+        page = self.request.GET.get('page')
+
+        try:
+            page_products = paginator.page(page)
+        except PageNotAnInteger:
+            page_products = paginator.page(1)
+        except EmptyPage:
+            page_products = paginator.page(paginator.num_pages)
+
+        context['products'] = page_products
+        return context
 
 
+@signin_required
 def search(request):
     search = request.GET['q']
     product = Products.objects.filter(product_name__icontains=search)
@@ -62,40 +81,78 @@ def search(request):
     return render(request, 'search.html', context)
 
 
+@signin_required
 def mobiles(request):
     mobiles = Products.objects.filter(category='mobile')
     context = {'mobiles': mobiles}
     return render(request, 'category.html', context)
 
-
+@signin_required
 def laptops(request):
     laptops = Products.objects.filter(category="laptop")
     context = {'laptops': laptops}
     return render(request, 'category.html', context)
 
-
+@signin_required
 def tablets(request):
     tablets = Products.objects.filter(category="tablet")
     context = {'tablets': tablets}
     return render(request, 'category.html', context)
 
-
+@signin_required
 def price_low_to_high(request):
     low = Products.objects.all().order_by('price')
     context = {'low': low}
     return render(request, 'price_range.html', context)
 
-
+@signin_required
 def price_high_to_low(request):
     high = Products.objects.all().order_by('-price')
     context = {'high': high}
     return render(request, 'price_range.html', context)
 
+@signin_required
+def apple(request):
+    apple = Products.objects.filter(brand='apple')
+    context = {'apple': apple}
+    return render(request, 'category.html', context)
 
+@signin_required
+def lenovo(request):
+    lenovo = Products.objects.filter(brand='lenovo')
+    context = {'lenovo': lenovo}
+    return render(request, 'category.html', context)
+
+@signin_required
+def oppo(request):
+    oppo = Products.objects.filter(brand='oppo')
+    context = {'oppo': oppo}
+    return render(request, 'category.html', context)
+
+@signin_required
+def oneplus(request):
+    oneplus = Products.objects.filter(brand='oneplus')
+    context = {'oneplus': oneplus}
+    return render(request, 'category.html', context)
+
+@signin_required
+def redmi(request):
+    redmi = Products.objects.filter(brand='redmi')
+    context = {'redmi': redmi}
+    return render(request, 'category.html', context)
+
+@signin_required
+def samsung(request):
+    samsung = Products.objects.filter(brand='samsung')
+    context = {'samsung': samsung}
+    return render(request, 'category.html', context)
+
+@method_decorator(signin_required, name="dispatch")
 class ViewDetails(TemplateView):
     template_name = "my_profile.html"
 
-
+    
+@method_decorator(signin_required, name="dispatch")
 class EditDetails(TemplateView):
     user_form = UserForm
     profile_form = UpdateForm
@@ -165,6 +222,7 @@ class DeleteFromCart(TemplateView):
         return redirect('mycart')
 
 
+@signin_required
 def place_order(request, *args, **kwargs):
     pid = kwargs["pid"]
     product = Products.objects.get(id=pid)
@@ -191,6 +249,7 @@ def place_order(request, *args, **kwargs):
     return render(request, "placeorder.html", context)
 
 
+@signin_required
 def view_orders(request, *args, **kwargs):
     orders = Orders.objects.filter(user=request.user, status="ordered")
 
@@ -200,6 +259,7 @@ def view_orders(request, *args, **kwargs):
     return render(request, "vieworders.html", context)
 
 
+@signin_required
 def cancel_order(request, *args, **kwargs):
     id = kwargs.get("id")
     order = Orders.objects.get(id=id)
@@ -207,7 +267,7 @@ def cancel_order(request, *args, **kwargs):
     order.save()
     return redirect("vieworders")
 
-
+@method_decorator(signin_required, name="dispatch")
 class WriteReview(TemplateView):
     template_name = 'review.html'
     context = {}
