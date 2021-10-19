@@ -6,7 +6,9 @@
         {% for cart in cart_products %}
         <div class="col-3">
             <div class="card" style="width: 18rem;">
+                <div class="embed-responsive embed-responsive-16by9">
                 <img src="{{cart.product.image.url}}" class="card-img-top" alt="...">
+                </div>
                 <div class="card-body">
                     <h5 class="card-title">{{cart.product.product_name}}</h5>
                     <p class="card-text"><i> <b>Rate : </b>{{cart.product.price}}</i><br>
