@@ -15,7 +15,7 @@
         Delivered Orders : {{order_count}}
       </button>
     </h2>
-    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+    <div id="collapseOne" class="accordion-collapse  " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
       <div class="accordion-body">
           <table class="table">
               {%for order in orders%}
@@ -37,7 +37,7 @@
         Total Shipped Items:{{orders_shipped_count}}
       </button>
     </h2>
-    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+    <div id="collapseTwo" class="accordion-collapse " aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
       <div class="accordion-body">
          <table class="table">
               {%for order in orders_shipped%}
@@ -52,7 +52,28 @@
     </div>
   </div>
     </div>
-
+ <div class="col-4">
+        <div class="accordion-item">
+    <h2 class="accordion-header" id="headingThree">
+      <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        Total Packed Items:{{orders_packed_count}}
+      </button>
+    </h2>
+    <div id="collapseThree" class="accordion-collapse " aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+         <table class="table">
+              {%for order in orders_packed%}
+                <tr>
+                    <td>{{order.product.product_name}}</td>
+                    <td>{{order.status}}</td>
+                    <td>{{order.user}}</td>
+                </tr>
+              {%endfor%}
+          </table>
+      </div>
+    </div>
+  </div>
+    </div>
 </div>
 </body>
 

@@ -12,12 +12,15 @@
         <div class="row mt-5">
             <div class="col-4"></div>
             <div class="col-4 ">
-                <form action="" method="POST" class="">
+                <form action="" method="POST" class="form-control">
                     {%csrf_token%}
                     <table>
                         {{form.as_table}}
                     </table>
-                    <button type="submit" value="Add Address" name="AddAddress">Add Address</button>
+                    <div class="text-center mt-4">
+                                            <button type="submit" value="Add Address" name="AddAddress" class="btn btn-success">Add Address</button>
+
+                    </div>
                 </form>
             </div>
             <div class="col-4"></div>

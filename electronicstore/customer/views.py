@@ -145,23 +145,23 @@ def place_order(request,*args,**kwargs):
     id=kwargs.get("id")
     product=Products.objects.get(id=id)
     instance={
-        "product":product.product_name
-    }
-    form=PlaceOrderForm(initial=instance)
+        "product":product.product_name,
 
+    }
+    form = PlaceOrderForm(initial=instance)
 
     context={}
     context["form"]=form
 
-
     if request.method=="POST":
         cid=kwargs.get("cid")
-
+        # aid = kwargs.get('aid')
         cart=Cart.objects.get(id=cid)
-        
+
+
         form=PlaceOrderForm(request.POST,request.user)
         if form.is_valid():
-            address=form.cleaned_data.get("address")
+            address= form.cleaned_data.get('address')
             product=product
             order=Orders(address=address,product=product,user=request.user,seller=product.user.username)
             print(product.user.username)

@@ -55,10 +55,11 @@ class UpdateForm(ModelForm):
 
 class PlaceOrderForm(forms.Form):
 
-    # address=forms.CharField(widget=forms.Select(attrs={'class':"form-control"}))
-    address = forms.ModelChoiceField(queryset=Address.objects.all(),empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
+    # address=forms.ChoiceField(widget=forms.Select(attrs={'class':"form-select"}))
+    address = forms.ModelChoiceField(queryset=Address.objects.all() ,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
     product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
-   
+
+
 
 #
 # class PlaceOrderForm(forms.ModelForm):
@@ -82,3 +83,11 @@ class UserAddressForm(forms.ModelForm):
         model = Address
         fields = ['name','phone','address_line','address_line2','town_city','pin_code']
 
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "phone": forms.TextInput(attrs={"class": "form-control"}),
+            "address_line": forms.TextInput(attrs={"class": "form-control"}),
+            "address_line2": forms.TextInput(attrs={"class": "form-control"}),
+            "town_city": forms.TextInput(attrs={"class": "form-control"}),
+            "pin_code": forms.TextInput(attrs={"class": "form-control"})
+        }

@@ -175,4 +175,8 @@ class OrderCount(TemplateView):
         shipped = self.model.objects.filter(status='shipped')
         context['orders_shipped'] = shipped
         context['orders_shipped_count'] = shipped.count()
+
+        packed = self.model.objects.filter(status='packed')
+        context['orders_packed'] = packed
+        context['orders_packed_count'] = packed.count()
         return context
