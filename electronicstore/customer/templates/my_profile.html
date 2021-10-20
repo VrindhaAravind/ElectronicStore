@@ -19,8 +19,8 @@
                 <h2>{{user.first_name}} {{user.last_name}}</h2>
                 <p><strong>Username: </strong> {{user.username}} </p>
                 <p><strong>Email: </strong> {{user.email}} </p>
-                <p><strong>Phone Number: </strong> {{user.profile.mobile_number}} </p>
-                <p><strong>DOB: </strong> {{user.profile.dob}} </p>
+                <p><strong>Phone Number: </strong> {{dets.mobile_number}} </p>
+                <p><strong>DOB: </strong> {{dets.dob}} </p>
                 <a href="{%url 'edit_profile'%}" class="btn btn-sm btn-primary shadow-sm">Update Profile</a>
             </div>
           </div>
