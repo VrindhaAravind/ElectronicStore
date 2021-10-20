@@ -148,8 +148,9 @@ def samsung(request):
     return render(request, 'category.html', context)
 
 @method_decorator(signin_required, name="dispatch")
-class ViewDetails(TemplateView):
-    template_name = "my_profile.html"
+def ViewDetails(request):
+    dets=Userdetails.objects.get(user=request.user)
+    return render(request,'my_profile.html',{'dets':dets})
 
     
 @method_decorator(signin_required, name="dispatch")
