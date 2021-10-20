@@ -24,7 +24,7 @@ class Cart(models.Model):
 class Orders(models.Model):
     product=models.ForeignKey(Products,on_delete=models.CASCADE)
     user=models.CharField(max_length=120)
-    address=models.CharField(max_length=250)
+    address=models.TextField()
     seller = models.CharField(max_length=250,default=None)
     options=(
         ("ordered","ordered"),
@@ -57,4 +57,4 @@ class Address(models.Model):
     delivery_instructions = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name+","+self.address_line+','+self.address_line2+','+self.phone
+        return self.name+","+self.address_line+','+self.address_line2+','+self.phone+','+self.town_city+','+self.pin_code

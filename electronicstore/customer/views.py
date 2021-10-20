@@ -141,38 +141,75 @@ class WriteReview(TemplateView):
             new_review.save()
             return redirect('viewproduct', product.id)
 
-def place_order(request,*args,**kwargs):
-    id=kwargs.get("id")
-    product=Products.objects.get(id=id)
-    instance={
-        "product":product.product_name,
+# def place_order(request,*args,**kwargs):
+#     id=kwargs.get("id")
+#     product=Products.objects.get(id=id)
+#     instance={
+#         "product":product.product_name,
+#
+#     }
+#     form = PlaceOrderForm(initial=instance)
+#
+#     context={}
+#     context["form"]=form
+#
+#     if request.method=="POST":
+#         cid=kwargs.get("cid")
+#         # aid = kwargs.get('aid')
+#         cart=Cart.objects.get(id=cid)
+#
+#
+#         form=PlaceOrderForm(request.POST,request.user)
+#         if form.is_valid():
+#             address= form.cleaned_data.get('address')
+#             product=product
+#             order=Orders(address=address,product=product,user=request.user,seller=product.user.username)
+#             print(product.user.username)
+#             order.save()
+#
+#             cart.status="orderplaced"
+#             cart.save()
+#
+#             return redirect("customer_home")
+#
+#     return render(request,"placeorder.html",context)
+def place_order(request, *args, **kwargs):
+    id = kwargs.get("id")
+    product = Products.objects.get(id=id)
+    address = Address.objects.filter(user=request.user)
+    # print(address)
+    instance = {
+        "product": product.product_name,
+        'address': address,
 
     }
+    # print(instance)
     form = PlaceOrderForm(initial=instance)
 
-    context={}
-    context["form"]=form
+    context = {}
+    context["form"] = form
 
-    if request.method=="POST":
-        cid=kwargs.get("cid")
-        # aid = kwargs.get('aid')
-        cart=Cart.objects.get(id=cid)
+    if request.method == "POST":
+        cid = kwargs.get("cid")
+
+        cart = Cart.objects.get(id=cid)
 
 
-        form=PlaceOrderForm(request.POST,request.user)
-        if form.is_valid():
-            address= form.cleaned_data.get('address')
-            product=product
-            order=Orders(address=address,product=product,user=request.user,seller=product.user.username)
-            print(product.user.username)
-            order.save()
-            
-            cart.status="orderplaced"
-            cart.save()
 
-            return redirect("customer_home")
+        address = request.POST.get('radioaddress')
 
-    return render(request,"placeorder.html",context)
+        print(address)
+        product = product
+        order = Orders(product=product, user=request.user, seller=product.user.username, address=address)
+        print(product.user.username)
+        order.save()
+
+        cart.status = "orderplaced"
+        cart.save()
+
+        return redirect("customer_home")
+
+    return render(request, "placeorder.html", {'address': address, 'product': product})
 
 def view_orders(request,*args,**kwargs):
     orders=Orders.objects.filter(user=request.user)

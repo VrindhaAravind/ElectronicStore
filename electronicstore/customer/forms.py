@@ -56,7 +56,7 @@ class UpdateForm(ModelForm):
 class PlaceOrderForm(forms.Form):
 
     # address=forms.ChoiceField(widget=forms.Select(attrs={'class':"form-select"}))
-    address = forms.ModelChoiceField(queryset=Address.objects.all() ,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
+    # address = forms.ModelChoiceField(queryset=Address.objects.all() ,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
     product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
 
 
