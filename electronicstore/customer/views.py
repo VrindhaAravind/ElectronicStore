@@ -189,8 +189,10 @@ class ViewProduct(TemplateView):
         id = kwargs['id']
         product = Products.objects.get(id=id)
         reviews = Review.objects.filter(product=product)
+        similar_products=Products.objects.filter(brand=product.brand,category=product.category)
         self.context['product'] = product
         self.context['reviews'] = reviews
+        self.context['similar_products']=similar_products
         return render(request, self.template_name, self.context)
 
 
