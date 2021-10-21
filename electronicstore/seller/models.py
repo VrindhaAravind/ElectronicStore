@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+class Brand(models.Model):
+    brand_name=models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.brand_name
+
 class Seller_Details(models.Model):
 
     user = models.ForeignKey(User,on_delete=models.CASCADE)
