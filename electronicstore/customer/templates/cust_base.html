@@ -83,12 +83,9 @@
                         <li class="list-group-item list-group-item-action list-group-item-light p-3">
                             <h6>Based On Brand</h6>
                             <div class="card" style="width: 12rem;">
-                                <a class="list-group-item" href="{% url 'apple'%}">Apple</a>
-                                <a class="list-group-item" href="{% url 'lenovo'%}">Lenovo</a>
-                                <a class="list-group-item" href="{% url 'oppo'%}">OPPO</a>
-                                <a class="list-group-item" href="{% url 'oneplus'%}">OnePlus</a>
-                                <a class="list-group-item" href="{% url 'redmi'%}">Redmi</a>
-                                <a class="list-group-item" href="{% url 'samsung'%}">Samsung</a>
+                                {%for brand in brands %}
+                                <a class="list-group-item" href="{%url 'brandfilter' brand.id %}">{{brand.brand_name}}</a>
+                                {%endfor%}
                             </div>
                         </li>
                     </ul>
