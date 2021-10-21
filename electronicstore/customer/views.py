@@ -308,3 +308,22 @@ class WriteReview(TemplateView):
 #         prod_review = Review.objects.filter(product=product)
 #         self.context['prod_review'] = prod_review
 #         return render(request, self.template_name, self.context)
+
+class BasePage(TemplateView):
+    template_name = 'cust_base.html'
+    context = {}
+
+    def get(self, request, *args, **kwargs)
+        brands = Brand.objects.all()
+        self.context['brands'] = brands
+        return render(request, self.template_name, self.context)
+    
+class FilterByBrand(TemplateView):
+    template_name = 'brandfilter.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        id=kwargs['pk']
+        brand=Brand.objects.get(id=id)
+        products=Products.objects.filter(brand=brand)
+        self.context['products']=products
+        return render(request,self.template_name,self.context)
