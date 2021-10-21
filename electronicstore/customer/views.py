@@ -333,7 +333,7 @@ class BasePage(TemplateView):
     template_name = 'cust_base.html'
     context = {}
 
-    def get(self, request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
         brands = Brand.objects.all()
         self.context['brands'] = brands
         return render(request, self.template_name, self.context)
