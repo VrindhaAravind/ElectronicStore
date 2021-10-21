@@ -4,6 +4,7 @@ from seller.models import Products
 from django.contrib.auth.models import User
 
 class Userdetails(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     mobile_number = models.CharField(max_length=15,blank=False)
@@ -35,6 +36,8 @@ class Orders(models.Model):
     )
     status=models.CharField(max_length=120,choices=options,default="ordered")
     date=models.DateField(auto_now=True)
+    
+    
 
 
 class Review(models.Model):

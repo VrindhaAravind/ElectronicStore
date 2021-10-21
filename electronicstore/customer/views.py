@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect,reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.views.generic import TemplateView
-from .forms import RegistrationForm,LoginForm,UpdateForm,ReviewForm,PlaceOrderForm,UserAddressForm
-from .models import Cart,Review,Orders,Address
+from django.views.generic import TemplateView,ListView, DetailView, CreateView, UpdateView
+from .forms import RegistrationForm,LoginForm,UpdateForm,ReviewForm,PlaceOrderForm,UserAddressForm,UserForm
+from .models import Cart,Review,Orders,Address,Userdetails
 from seller.models import Products
 from .decorators import signin_required
+from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
-
+from django.db.models import IntegerField, Case, Value, When
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 class RegistrationView(TemplateView):
     form_class = RegistrationForm
@@ -52,13 +55,33 @@ class SignInView(TemplateView):
 
 
 @method_decorator(signin_required, name="dispatch")
-class HomePageView(TemplateView):
+class HomePageView(ListView):
     template_name = 'homepage.html'
-    context={}
-    def get(self, request, *args, **kwargs):
+    model = Products
+    paginate_by = 3
+
+    def get_context_data(self, **kwargs):
+        context = super(HomePageView, self).get_context_data(**kwargs)
         products = Products.objects.all()
-        self.context['products']=products
-        return render(request, self.template_name,self.context)
+        paginator = Paginator(products, self.paginate_by)
+
+        page = self.request.GET.get('page')
+
+        try:
+            page_products = paginator.page(page)
+        except PageNotAnInteger:
+            page_products = paginator.page(1)
+        except EmptyPage:
+            page_products = paginator.page(paginator.num_pages)
+
+        context['products'] = page_products
+        return context
+
+def search(request):
+    search = request.GET['q']
+    product = Products.objects.filter(product_name__icontains=search)
+    context = {'product': product}
+    return render(request, 'search.html', context)
 
 @signin_required
 def signout(request):
@@ -67,35 +90,115 @@ def signout(request):
 
 
 @signin_required
-def update_details(request):
-    # detail=Userdetails.objects.get()
-    form = UpdateForm()
-    if request.method == "GET":
-        context = {"form": form}
-        return render(request, "user_details.html", context)
-    elif request.method == "POST":
-        form = UpdateForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("customer_home")
-        else:
-            context = {"form": form}
-            return render(request, "user_details.html", context)
+def mobiles(request):
+    mobiles = Products.objects.filter(category='mobile')
+    context = {'mobiles': mobiles}
+    return render(request, 'category.html', context)
+@signin_required
+def laptops(request):
+    laptops = Products.objects.filter(category="laptop")
+    context = {'laptops': laptops}
+    return render(request, 'category.html', context)
+@signin_required
+def tablets(request):
+    tablets = Products.objects.filter(category="tablet")
+    context = {'tablets': tablets}
+    return render(request, 'category.html', context)
+@signin_required
+def price_low_to_high(request):
+    low = Products.objects.all().order_by('price')
+    context = {'low': low}
+    return render(request, 'price_range.html', context)
+@signin_required
+def price_high_to_low(request):
+    high = Products.objects.all().order_by('-price')
+    context = {'high': high}
+    return render(request, 'price_range.html', context)
+
+@signin_required
+def apple(request):
+    apple = Products.objects.filter(brand='apple')
+    context = {'apple': apple}
+    return render(request, 'category.html', context)
+
+@signin_required
+def lenovo(request):
+    lenovo = Products.objects.filter(brand='lenovo')
+    context = {'lenovo': lenovo}
+    return render(request, 'category.html', context)
+
+@signin_required
+def oppo(request):
+    oppo = Products.objects.filter(brand='oppo')
+    context = {'oppo': oppo}
+    return render(request, 'category.html', context)
+
+@signin_required
+def oneplus(request):
+    oneplus = Products.objects.filter(brand='oneplus')
+    context = {'oneplus': oneplus}
+    return render(request, 'category.html', context)
+
+@signin_required
+def redmi(request):
+    redmi = Products.objects.filter(brand='redmi')
+    context = {'redmi': redmi}
+    return render(request, 'category.html', context)
+
+@signin_required
+def samsung(request):
+    samsung = Products.objects.filter(brand='samsung')
+    context = {'samsung': samsung}
+    return render(request, 'category.html', context)
+
+# @method_decorator(signin_required, name="dispatch")
+def ViewDetails(request):
+    dets=Userdetails.objects.filter(user=request.user)
+    return render(request,'my_profile.html',{'dets':dets})
+
+class EditDetails(TemplateView):
+    user_form = UserForm
+    profile_form = UpdateForm
+    template_name = "user_details.html"
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request):
+        post_data = request.POST or None
+        file_data = request.FILES or None
+
+        user_form = UserForm(post_data, instance=request.user)
+        profile_form = UpdateForm(post_data, file_data, instance=request.user)
+        #profile_form = UpdateForm(post_data, file_data, instance=request.user.profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return HttpResponseRedirect(reverse_lazy('view_profile'))
+
+        context = self.get_context_data(user_form=user_form, profile_form=profile_form)
+
+        return self.render_to_response(context)
 
 
+
+
+@method_decorator(signin_required, name="dispatch")
 class ViewProduct(TemplateView):
     template_name = 'productdetail.html'
     context = {}
 
     def get(self, request, *args, **kwargs):
-        id = kwargs['pk']
+        id = kwargs['id']
         product = Products.objects.get(id=id)
         reviews = Review.objects.filter(product=product)
+        similar_products=Products.objects.filter(brand=product.brand,category=product.category)
         self.context['product'] = product
         self.context['reviews'] = reviews
+        self.context['similar_products']=similar_products
         return render(request, self.template_name, self.context)
-
-
+@signin_required
 def add_to_cart(request, *args, **kwargs):
     id = kwargs['pk']
     product = Products.objects.get(id=id)
@@ -103,7 +206,7 @@ def add_to_cart(request, *args, **kwargs):
     cart.save()
     return redirect('mycart')
 
-
+@method_decorator(signin_required, name="dispatch")
 class MyCart(TemplateView):
     template_name = 'cart.html'
     context = {}
@@ -113,7 +216,7 @@ class MyCart(TemplateView):
         self.context['cart_products'] = cart_products
         return render(request, self.template_name, self.context)
 
-
+@method_decorator(signin_required, name="dispatch")
 class DeleteFromCart(TemplateView):
     def get(self, request, *args, **kwargs):
         id = kwargs['pk']
@@ -122,6 +225,7 @@ class DeleteFromCart(TemplateView):
         return redirect('mycart')
 
 
+@method_decorator(signin_required, name="dispatch")
 class WriteReview(TemplateView):
     template_name = 'review.html'
     context = {}
@@ -132,7 +236,7 @@ class WriteReview(TemplateView):
         return render(request, self.template_name, self.context)
 
     def post(self, request, *args, **kwargs):
-        id = kwargs['pk']
+        id = kwargs['id']
         product = Products.objects.get(id=id)
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -140,44 +244,13 @@ class WriteReview(TemplateView):
             new_review = Review(user=request.user, product=product, review=review)
             new_review.save()
             return redirect('viewproduct', product.id)
-
-# def place_order(request,*args,**kwargs):
-#     id=kwargs.get("id")
-#     product=Products.objects.get(id=id)
-#     instance={
-#         "product":product.product_name,
-#
-#     }
-#     form = PlaceOrderForm(initial=instance)
-#
-#     context={}
-#     context["form"]=form
-#
-#     if request.method=="POST":
-#         cid=kwargs.get("cid")
-#         # aid = kwargs.get('aid')
-#         cart=Cart.objects.get(id=cid)
-#
-#
-#         form=PlaceOrderForm(request.POST,request.user)
-#         if form.is_valid():
-#             address= form.cleaned_data.get('address')
-#             product=product
-#             order=Orders(address=address,product=product,user=request.user,seller=product.user.username)
-#             print(product.user.username)
-#             order.save()
-#
-#             cart.status="orderplaced"
-#             cart.save()
-#
-#             return redirect("customer_home")
-#
-#     return render(request,"placeorder.html",context)
+@signin_required
 def place_order(request, *args, **kwargs):
+    print(kwargs)
     id = kwargs.get("id")
     product = Products.objects.get(id=id)
     address = Address.objects.filter(user=request.user)
-    # print(address)
+    
     instance = {
         "product": product.product_name,
         'address': address,
@@ -201,7 +274,7 @@ def place_order(request, *args, **kwargs):
         print(address)
         product = product
         order = Orders(product=product, user=request.user, seller=product.user.username, address=address)
-        print(product.user.username)
+        print(order)
         order.save()
 
         cart.status = "orderplaced"
@@ -210,15 +283,16 @@ def place_order(request, *args, **kwargs):
         return redirect("customer_home")
 
     return render(request, "placeorder.html", {'address': address, 'product': product})
-
+@signin_required
 def view_orders(request,*args,**kwargs):
     orders=Orders.objects.filter(user=request.user)
 
     context={
         "orders":orders,
     }
+    print(kwargs)
     return render(request,"vieworders.html",context)
-
+@signin_required
 def cancel_order(request,*args,**kwargs):
     id=kwargs.get("id")
     order=Orders.objects.get(id=id)

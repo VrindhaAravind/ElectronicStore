@@ -24,27 +24,10 @@ class LoginForm(forms.Form):
     username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"class": "form-control"}))
     password = forms.CharField(max_length=20, widget=forms.PasswordInput(attrs={"class": "form-control"}))
 
-    class UpdateForm(ModelForm):
-        class Meta:
-            model = Userdetails
-            fields = "__all__"
-            widgets = {
-                "first_name": forms.TextInput(attrs={"class": "form-control"}),
-                "last_name": forms.TextInput(attrs={"class": "form-control"}),
-                "mobile_number": forms.TextInput(attrs={"class": "form-control"}),
-                "dob": forms.DateInput(attrs={"class": "form-control", "placeholder": "yyyy-mm-dd"}),
-                "image": forms.FileInput(attrs={"class": "form-control"}),
-            }
-
-
-class ReviewForm(forms.Form):
-    review = forms.CharField(widget=forms.Textarea())
-    
-    
 class UpdateForm(ModelForm):
     class Meta:
         model = Userdetails
-        fields = "__all__"
+        fields = ["first_name",'last_name',"mobile_number","dob","image"]
         widgets = {
             "first_name": forms.TextInput(attrs={"class": "form-control"}),
             "last_name": forms.TextInput(attrs={"class": "form-control"}),
@@ -53,30 +36,28 @@ class UpdateForm(ModelForm):
             "image": forms.FileInput(attrs={"class": "form-control"}),
         }
 
+class ReviewForm(forms.Form):
+    review = forms.CharField(widget=forms.Textarea())
+    
+
 class PlaceOrderForm(forms.Form):
 
     # address=forms.ChoiceField(widget=forms.Select(attrs={'class':"form-select"}))
-    # address = forms.ModelChoiceField(queryset=Address.objects.all() ,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
+    # a ddress = forms.ModelChoiceField(queryset=Address.objects.all() ,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
     product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
 
 
 
-#
-# class PlaceOrderForm(forms.ModelForm):
-#
-#     # address=forms.CharField(widget=forms.Textarea(attrs={'class':"form-control"}))
-#     address = forms.ModelChoiceField(queryset=None,empty_label='Select Address',widget=forms.Select(attrs={'class':'form-select'}))
-#     product=forms.CharField(widget=forms.TextInput(attrs={'class':"form-control"}))
-#     class Meta:
 
-#         model = Orders
-#         fields = ('address','product')
-#
-#     def __init__(self,user,*args,**kwargs,):
-#         super(PlaceOrderForm,self).__init__(*args,**kwargs)
-#         self.fields['address'].queryset = Address.objects.all().filter(user=user)
+class UserForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=["username","email"]
+        widgets={
+            "username": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
 
-
+        }
 class UserAddressForm(forms.ModelForm):
 
     class Meta:
