@@ -3,12 +3,11 @@
 <div class="container">
     <h4>CART ITEMS..</h4>
     <div class="row">
-        {% for cart in cart_products %}
+        <div class="col-9">
+                    {% for cart in cart_products %}
         <div class="col-3">
             <div class="card" style="width: 18rem;">
-                <div class="embed-responsive embed-responsive-16by9">
                 <img src="{{cart.product.image.url}}" class="card-img-top" alt="...">
-                </div>
                 <div class="card-body">
                     <h5 class="card-title">{{cart.product.product_name}}</h5>
                     <p class="card-text"><i> <b>Rate : </b>{{cart.product.price}}</i><br>
@@ -21,7 +20,20 @@
             </div>
         </div>
         {% endfor %}
+        </div>
+        <div class="col-3">
+                    <div class="card" style="width: 18rem;">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><h4>Price Details</h4></li>
+                <li class="list-group-item">No.of items :{{cnt}}</li>
+                <li class="list-group-item">Total Price:Rs. {{total}}</li>
+
+            </ul>
+        </div>
+        </div>
+
     </div>
 </div>
+
 
 {%endblock%}
