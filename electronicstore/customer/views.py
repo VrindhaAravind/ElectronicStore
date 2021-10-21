@@ -62,6 +62,8 @@ class HomePageView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
         products = Products.objects.all()
+        brands = Brand.objects.all()
+        self.context['brands'] = brands
         paginator = Paginator(products, self.paginate_by)
 
         page = self.request.GET.get('page')
@@ -81,7 +83,9 @@ class HomePageView(ListView):
 def search(request):
     search = request.GET['q']
     product = Products.objects.filter(product_name__icontains=search)
-    context = {'product': product}
+    brands = Brand.objects.all()
+    context['brands'] = brands
+    context['product']=product
     return render(request, 'search.html', context)
 
 
@@ -115,46 +119,49 @@ def price_high_to_low(request):
     context = {'high': high}
     return render(request, 'price_range.html', context)
 
-@signin_required
-def apple(request):
-    apple = Products.objects.filter(brand='apple')
-    context = {'apple': apple}
-    return render(request, 'category.html', context)
 
-@signin_required
-def lenovo(request):
-    lenovo = Products.objects.filter(brand='lenovo')
-    context = {'lenovo': lenovo}
-    return render(request, 'category.html', context)
-
-@signin_required
-def oppo(request):
-    oppo = Products.objects.filter(brand='oppo')
-    context = {'oppo': oppo}
-    return render(request, 'category.html', context)
-
-@signin_required
-def oneplus(request):
-    oneplus = Products.objects.filter(brand='oneplus')
-    context = {'oneplus': oneplus}
-    return render(request, 'category.html', context)
-
-@signin_required
-def redmi(request):
-    redmi = Products.objects.filter(brand='redmi')
-    context = {'redmi': redmi}
-    return render(request, 'category.html', context)
-
-@signin_required
-def samsung(request):
-    samsung = Products.objects.filter(brand='samsung')
-    context = {'samsung': samsung}
-    return render(request, 'category.html', context)
+# @signin_required
+# def apple(request):
+#     apple = Products.objects.filter(brand='apple')
+#     context = {'apple': apple}
+#     return render(request, 'category.html', context)
+# 
+# @signin_required
+# def lenovo(request):
+#     lenovo = Products.objects.filter(brand='lenovo')
+#     context = {'lenovo': lenovo}
+#     return render(request, 'category.html', context)
+# 
+# @signin_required
+# def oppo(request):
+#     oppo = Products.objects.filter(brand='oppo')
+#     context = {'oppo': oppo}
+#     return render(request, 'category.html', context)
+# 
+# @signin_required
+# def oneplus(request):
+#     oneplus = Products.objects.filter(brand='oneplus')
+#     context = {'oneplus': oneplus}
+#     return render(request, 'category.html', context)
+# 
+# @signin_required
+# def redmi(request):
+#     redmi = Products.objects.filter(brand='redmi')
+#     context = {'redmi': redmi}
+#     return render(request, 'category.html', context)
+# 
+# @signin_required
+# def samsung(request):
+#     samsung = Products.objects.filter(brand='samsung')
+#     context = {'samsung': samsung}
+#     return render(request, 'category.html', context)
 
 @method_decorator(signin_required, name="dispatch")
 def ViewDetails(request):
+    brands = Brand.objects.all()
+    
     dets=Userdetails.objects.get(user=request.user)
-    return render(request,'my_profile.html',{'dets':dets})
+    return render(request,'my_profile.html',{'dets':dets,'brands':brands})
 
     
 @method_decorator(signin_required, name="dispatch")
@@ -162,8 +169,10 @@ class EditDetails(TemplateView):
     user_form = UserForm
     profile_form = UpdateForm
     template_name = "user_details.html"
-
+    context={}
     def get(self, request, *args, **kwargs):
+        brands = Brand.objects.all()
+        self.context['brands'] = brands
         return self.post(request, *args, **kwargs)
 
     def post(self, request):
@@ -194,6 +203,8 @@ class ViewProduct(TemplateView):
         product = Products.objects.get(id=id)
         reviews = Review.objects.filter(product=product)
         similar_products=Products.objects.filter(brand=product.brand,category=product.category)
+        brands = Brand.objects.all()
+        self.context['brands'] = brands
         self.context['product'] = product
         self.context['reviews'] = reviews
         self.context['similar_products']=similar_products
@@ -217,6 +228,8 @@ class MyCart(TemplateView):
     def get(self, request, *args, **kwargs):
         cart_products = Cart.objects.filter(user=request.user, status='ordernotplaced')
         total = Cart.objects.filter(status="ordernotplaced", user=request.user).aggregate(Sum('product__price'))
+        brands = Brand.objects.all()
+        self.context['brands'] = brands
         self.context['cart_products'] = cart_products
         self.context['total']=total.get('product__price__sum')
         self.context['cnt']=cart_count(request.user)
@@ -241,6 +254,8 @@ def place_order(request, *args, **kwargs):
     }
     form = PlaceOrderForm(initial=instance)
     context = {}
+    brands = Brand.objects.all()
+    context['brands'] = brands
     context["form"] = form
 
     if request.method == "POST":
@@ -262,9 +277,12 @@ def place_order(request, *args, **kwargs):
 @signin_required
 def view_orders(request, *args, **kwargs):
     orders = Orders.objects.filter(user=request.user, status="ordered")
+    brands = Brand.objects.all()
+  
 
     context = {
         "orders": orders,
+        "brands": brands
     }
     return render(request, "vieworders.html", context)
 
@@ -284,6 +302,8 @@ class WriteReview(TemplateView):
 
     def get(self, request, *args, **kwargs):
         form = ReviewForm()
+        brands = Brand.objects.all()
+        self.context['brands'] = brands
         self.context['form'] = form
         return render(request, self.template_name, self.context)
 
