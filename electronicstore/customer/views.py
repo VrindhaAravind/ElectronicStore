@@ -48,6 +48,10 @@ def signout(request):
     logout(request)
     return redirect("cust_signin")
 
+def cart_count(user):
+    cnt=Cart.objects.filter(user=user,status='ordernotplaced').count()
+    return cnt
+
 
 @method_decorator(signin_required, name="dispatch")
 class HomePageView(ListView):
@@ -212,7 +216,10 @@ class MyCart(TemplateView):
 
     def get(self, request, *args, **kwargs):
         cart_products = Cart.objects.filter(user=request.user, status='ordernotplaced')
+        total = Cart.objects.filter(status="ordernotplaced", user=request.user).aggregate(Sum('product__price'))
         self.context['cart_products'] = cart_products
+        self.context['total']=total.get('product__price__sum')
+        self.context['cnt']=cart_count(request.user)
         return render(request, self.template_name, self.context)
 
 
