@@ -2,6 +2,7 @@
 {%block body_block%}
 <div class="container">
     <h4>CART ITEMS..</h4>
+    {% if cart_products %}
     <div class="row">
         <div class="col-9">
                     {% for cart in cart_products %}
@@ -34,6 +35,9 @@
 
     </div>
     <a href="" class="btn btn-success">Proceed to Checkout</a>
-
+    {% else %}
+    <h6>No items in Cart</h6>
+    {% endif %}
+</div>
 
 {%endblock%}
