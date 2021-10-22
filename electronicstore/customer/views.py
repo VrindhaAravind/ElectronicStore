@@ -215,8 +215,14 @@ class ViewProduct(TemplateView):
 def add_to_cart(request, *args, **kwargs):
     id = kwargs['id']
     product = Products.objects.get(id=id)
-    cart = Cart(product=product, user=request.user)
-    cart.save()
+    if Cart.objects.filter(product=product,user=request.user,status='ordernotplaced').exists():
+        cart=Cart.objects.get(product=product)
+        cart.quantity+=1
+        cart.save()
+    else:
+        cart = Cart(product=product, user=request.user)
+        cart.save()
+        print('product added')
     return redirect('mycart')
 
 
@@ -224,15 +230,17 @@ def add_to_cart(request, *args, **kwargs):
 class MyCart(TemplateView):
     template_name = 'cart.html'
     context = {}
-
     def get(self, request, *args, **kwargs):
         cart_products = Cart.objects.filter(user=request.user, status='ordernotplaced')
-        total = Cart.objects.filter(status="ordernotplaced", user=request.user).aggregate(Sum('product__price'))
-        brands = Brand.objects.all()
-        self.context['brands'] = brands
+        # total = Cart.objects.filter(status="ordernotplaced", user=request.user).aggregate(Sum('product__price'))
+        total=0
+        for cart in cart_products:
+            total+=cart.product.price*cart.quantity
+        print(total)
+
         self.context['cart_products'] = cart_products
-        self.context['total']=total.get('product__price__sum')
-        self.context['cnt']=cart_count(request.user)
+        self.context['total']=total
+        # self.context['cnt']=cart_count(request.user)
         return render(request, self.template_name, self.context)
 
 
@@ -347,3 +355,20 @@ class FilterByBrand(TemplateView):
         products=Products.objects.filter(brand=brand)
         self.context['products']=products
         return render(request,self.template_name,self.context)
+    
+    
+def cart_plus(request,*args,**kwargs):
+    id=kwargs['pk']
+    cart=Cart.objects.get(id=id)
+    cart.quantity+=1
+    cart.save()
+    return redirect('mycart')
+
+def cart_minus(request,*args,**kwargs):
+    id=kwargs['pk']
+    cart=Cart.objects.get(id=id)
+    cart.quantity-=1
+    cart.save()
+    if cart.quantity<1:
+        return redirect('deletecart',cart.id)
+    return redirect('mycart')
