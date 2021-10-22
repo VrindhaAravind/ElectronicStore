@@ -14,7 +14,7 @@
                         {{cart.product.brand}}<br>
                         {{cart.product.description}}
                     </p>
-                    <a href="{% url 'placeorder' cart.product.id cart.id%}" class="btn btn-primary">Buy Now</a>
+<!--                    <a href="{% url 'placeorder' cart.product.id cart.id%}" class="btn btn-primary">Buy Now</a>-->
                     <a class="btn btn-danger" href="{%url 'deletecart' cart.id %}">Remove</a>
                 </div>
             </div>
@@ -33,7 +33,7 @@
         </div>
 
     </div>
-</div>
+    <a href="" class="btn btn-success">Proceed to Checkout</a>
 
 
 {%endblock%}
