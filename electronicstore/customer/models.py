@@ -18,10 +18,11 @@ class Userdetails(models.Model):
 class Cart(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     user = models.CharField(max_length=120)
+    quantity=models.IntegerField(default=1)
     options = (("ordernotplaced", "ordernotplaced"),
                ("orderplaced", "orderplaced")
                )
-    status = models.CharField(max_length=120, choices=options, default="ordernotplaced")
+    status = models.CharField(max_length=120, choices=options, default="ordernotplaced")c
 
 
 class Orders(models.Model):
