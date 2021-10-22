@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Seller_Details,Products
+from .models import Seller_Details,Products,ProductImage
 from customer.models import Orders
 
 class UserForm(UserCreationForm):
@@ -89,3 +89,12 @@ class UpdateOrderForm(forms.ModelForm):
     class Meta:
         model = Orders
         fields = ['status']
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = ProductImage
+        exclude = ('product',)
+
+        widgets = {
+            'images':forms.FileInput(attrs={'multiple':True})
+        }

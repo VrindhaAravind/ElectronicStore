@@ -12,6 +12,9 @@ class Seller_Details(models.Model):
     account_number = models.IntegerField()
     ifsc_code = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.username
+
 
 
 
@@ -32,3 +35,9 @@ class Products(models.Model):
     def __str__(self):
 
         return self.product_name
+class ProductImage(models.Model):
+    product = models.ForeignKey(Products,default=None,on_delete=models.CASCADE)
+    images = models.FileField(upload_to='images')
+
+    def __str__(self):
+        return self.product.product_name

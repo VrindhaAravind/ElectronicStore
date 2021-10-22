@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .forms import UserForm,ProfileForm,LoginForm,ProductAddForm,UpdateOrderForm
+from .forms import UserForm,ProfileForm,LoginForm,ProductAddForm,UpdateOrderForm,ImageForm
 from .models import Seller_Details
 from django.contrib.auth import authenticate,logout,login
 from django.contrib.auth.models import User,auth
@@ -85,24 +85,33 @@ def seller_logout(request):
 def add_product(request):
     
     form = ProductAddForm()
-    context = {}
-    context['form']= form
+    image_form = ImageForm()
+    context = {
+        'form': form,
+        'image_form': image_form
+    }
+    
     
     if request.method == "POST":
-        
-        form = ProductAddForm(request.POST,request.FILES)
-        if form.is_valid():
+
+        form = ProductAddForm(request.POST, request.FILES)
+        image_form = ImageForm(request.POST, request.FILES)
+        files = request.FILES.getlist('images')
+        if form.is_valid() and image_form.is_valid():
             
             instance = form.save(commit=False)
             instance.user = request.user
             instance.save()
-            # form.save()
-            # print('product saved')
-            messages.success(request,'Product Added')
+            for f in files:
+                file_instance = models.ProductImage(images=f,product=instance)
+                file_instance.save()
             return redirect('base')
         else:
-            context['form'] = form
-            messages.error(request,'Failed to add')
+            context = {
+                'form': form,
+                'image_form': image_form
+            }
+           
             return render(request,'add_product.html',context)
     return render(request, 'add_product.html', context)
 
@@ -123,16 +132,20 @@ def get_object(id):
 def edit_product(request,id):
     product = get_object(id)
     form = ProductAddForm(instance=product)
-
-    context = {'form':form }
+    image_form = ImageForm(instance=product)
+    context = {'form':form,
+               'image_form':image_form}
 
     if request.method == "POST":
         form = ProductAddForm(data=request.POST,files=request.FILES,instance=product)
-        if form.is_valid():
+        image_form = ImageForm(data=request.POST,files=request.FILES,instance=product)
+        if form.is_valid() and image_form.is_valid():
             form.save()
+            image_form.save()
             return redirect('listallproducts')
         else:
-            context={'from':form}
+            context={'from':form,
+                     'image_form':image_form}
             messages.error(request,"Failed to edit")
             return render(request,'edit_product.html',context)
     return render(request, 'edit_product.html', context)
