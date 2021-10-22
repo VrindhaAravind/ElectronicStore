@@ -216,7 +216,7 @@ def add_to_cart(request, *args, **kwargs):
     id = kwargs['id']
     product = Products.objects.get(id=id)
     if Cart.objects.filter(product=product,user=request.user,status='ordernotplaced').exists():
-        cart=Cart.objects.get(product=product)
+        cart=Cart.objects.get(product=product,user=request.user)
         cart.quantity+=1
         cart.save()
     else:
