@@ -419,29 +419,32 @@ def CheckoutView(request):
     return render(request, 'checkout.html', context)
 
 def summery(request,*args,**kwargs):
+    Orders.objects.filter(user=request.user,status='pending').delete()
     print(kwargs.get('id'))
     print(request.user)
     cart_item=Cart.objects.filter(user=request.user,status='ordernotplaced')
-
+    address = Address.objects.get(id=kwargs.get('id'))
+    ad = '{},{},{}, {}, {}, {}, India, {} '.format(address.name, address.mob_no, address.house, address.street,
+                                                   address.town, address.state, address.pin, address.landmark)
     for i in cart_item:
         print(Products.objects.get(id=i.product.id).id)
         order=Orders()
-        if(Orders.objects.filter(product=Products.objects.get(id=i.product.id),user=request.user)).exists():
+        if(Orders.objects.filter(product=Products.objects.get(id=i.product.id),user=request.user,address=ad)).exists():
             print('already exists')
         else:
             order.product=Products.objects.get(id=i.product.id)
             order.user=request.user
             order.seller=Products.objects.get(id=i.product.id).user
-            address=Address.objects.get(id=kwargs.get('id'))
-            ad='{},{},{}, {}, {}, {}, India, {} '.format(address.name,address.mob_no,address.house,address.street,address.town,address.state,address.pin,address.landmark)
             order.address=ad
+            order.quantity=i.quantity
             order.save()
             print(order.date)
             print("saved")
-    address = Orders.objects.get(user=request.user,id=kwargs.get('id')).address
+    # address = Orders.objects.filter(user=request.user,status='pending')[0].address
     print(address)
     print("hi")
     sum=0
+    qty=0
     data=[]
     for i in cart_item:
         content={}
@@ -453,10 +456,12 @@ def summery(request,*args,**kwargs):
         content['seller']=product.user
         content['price']=product.price
         content['offer']=product.offer
-        sum += product.price
+        content['quantity']=i.quantity
+        sum += (product.price*i.quantity)
+        qty+=i.quantity
         data.append(content)
 
-    return render(request,'order_summery.html',{'data':data,'address':address,'sum':sum})
+    return render(request,'order_summery.html',{'data':data,'address':ad,'sum':sum,'qty':qty})
 
 class DeleteAddress(TemplateView):
     def get(self, request, *args, **kwargs):
