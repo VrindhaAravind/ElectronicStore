@@ -11,6 +11,10 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.db.models import IntegerField, Case, Value, When
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
+import stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
+from django.db.models import Sum
 
 
 class RegistrationView(CreateView):
@@ -488,4 +492,33 @@ def editaddress(request,*args,**kwargs):
 
 
 
+class GatewayView(TemplateView):
+    template_name = "stripe.html"
 
+    def get_context_data(self, **kwargs):
+        total = Cart.objects.filter(status="ordernotplaced", user=self.request.user).aggregate(Sum('product__price'))
+        context = super().get_context_data(**kwargs)
+        context['total'] = total
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+        return context
+
+
+def charge(request):
+    if request.method == "POST":
+        charge = stripe.Charge.create(
+            amount=10,
+            currency="INR",
+            description="Payment of product",
+            source=request.POST['stripeToken']
+        )
+        cart_items = Cart.objects.filter(status="ordernotplaced", user=request.user)
+        ordered_items=Orders.objects.filter(status="pending",user=request.user)
+        for item in cart_items:
+            item.status="orderplaced"
+            item.product.stock=item.product.stock-item.quantity
+            # print(item.product.stock)
+        for item in ordered_items:
+            item.status="ordered"
+
+        return render(request, 'payment.html',charge)
+    return render(request, 'payment.html')
