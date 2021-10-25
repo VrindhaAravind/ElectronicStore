@@ -54,24 +54,24 @@ class ProductAddForm(forms.ModelForm):
             ('tablet','Tablet')
         ]
         
-        brand_names = [
-            ('apple','Apple'),
-            ('samsung', 'Samsung'),
-            ('oneplus', 'OnePlus'),
-            ('redmi','Redmi'),
-            ('oppo', 'OPPO'),
-            ('lenovo', 'Lenovo'),
-            ('hp', 'HP'),
-            ('dell', 'Dell'),
-            ('azus', 'Azus'),
-            
-            
-        ]
+        # brand_names = [
+        #     ('apple','Apple'),
+        #     ('samsung', 'Samsung'),
+        #     ('oneplus', 'OnePlus'),
+        #     ('redmi','Redmi'),
+        #     ('oppo', 'OPPO'),
+        #     ('lenovo', 'Lenovo'),
+        #     ('hp', 'HP'),
+        #     ('dell', 'Dell'),
+        #     ('azus', 'Azus'),
+        #     
+        #     
+        # ]
 
         widgets = {
             'product_name':forms.TextInput(attrs={'class':'form-control'}),
             'category':forms.Select(choices=category_options,attrs={'class':'form-control'}),
-            'brand': forms.Select(choices=brand_names,attrs={'class': 'form-control',}),
+            'brand': forms.Select(attrs={'class': 'form-control',}),
             
             'description': forms.TextInput(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),

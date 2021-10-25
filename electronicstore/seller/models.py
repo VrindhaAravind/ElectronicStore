@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+class Brand(models.Model):
+    brand_name = models.CharField(max_length=100,unique=True)
+
+    def __str__(self):
+        return self.brand_name
 
 class Seller_Details(models.Model):
 
@@ -26,7 +31,7 @@ class Products(models.Model):
     price = models.FloatField()
     stock = models.IntegerField()
     category = models.CharField(max_length=50)
-    brand = models.CharField(max_length=50)
+    brand = models.ForeignKey(Brand,on_delete=models.CASCADE,null=True)
     ram = models.CharField(max_length=50)
     storage = models.CharField(max_length=50)
     color = models.CharField(max_length=50)

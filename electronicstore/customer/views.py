@@ -285,7 +285,7 @@ def place_order(request, *args, **kwargs):
     return render(request, "placeorder.html", {'address': address, 'product': product})
 @signin_required
 def view_orders(request,*args,**kwargs):
-    orders=Orders.objects.filter(user=request.user)
+    orders=Orders.objects.filter(user=request.user).exclude(status='cancelled')
 
     context={
         "orders":orders,

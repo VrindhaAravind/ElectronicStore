@@ -48,7 +48,7 @@
             {%for review in reviews %}
             <div class="card bg-light">
                 <div class="card-body">
-                    <h6>{{review.user}}</h6>
+                    <h6>{{review.user.first_name}}</h6>
                     <hr>
                     <b><p style="text-align:center;">{{review.review}}</p></b>
                     <span class="text-muted" style="font-size:10px;">{{review.date}}</span>
