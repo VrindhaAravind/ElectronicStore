@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView
 from .forms import RegistrationForm, LoginForm, UserForm, UpdateForm, ReviewForm, PlaceOrderForm
 from .models import Cart, Review, Userdetails, Orders,Address
-from seller.models import Products
+from seller.models import Products, Brand
 from .decorators import signin_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
@@ -52,9 +52,6 @@ def signout(request):
     logout(request)
     return redirect("cust_signin")
 
-def cart_count(user):
-    cnt=Cart.objects.filter(user=user,status='ordernotplaced').count()
-    return cnt
 
 
 @method_decorator(signin_required, name="dispatch")
@@ -213,6 +210,11 @@ class ViewProduct(TemplateView):
         self.context['reviews'] = reviews
         self.context['similar_products']=similar_products
         return render(request, self.template_name, self.context)
+
+    
+def cart_count(user):
+    cnt=Cart.objects.filter(user=user,status='ordernotplaced').count()
+    return cnt
 
 
 @signin_required
