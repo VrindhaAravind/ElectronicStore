@@ -2,6 +2,7 @@ from django.urls import path
 from customer import views
 
 
+
 urlpatterns = [
     path('register',views.RegistrationView.as_view(), name='register'),
     path('login', views.SignInView.as_view(), name='cust_signin'),
@@ -33,4 +34,8 @@ urlpatterns = [
     path('base',views.BasePage.as_view(),name='basepage'),
     path('plus/<int:pk>',views.cart_plus,name='plus'),
     path('minus/<int:pk>',views.cart_minus,name='minus'),
+    path("checkout", views.CheckoutView, name="checkout"),
+    path('summery/<int:id>',views.summery,name='summery'),
+    path('deleteaddress/<int:pk>',views.DeleteAddress.as_view(),name='deleteaddress'),
+    path('editaddress/int<id>',views.editaddress,name='editaddress')
 ]
