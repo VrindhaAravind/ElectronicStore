@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView
 from .forms import RegistrationForm, LoginForm, UserForm, UpdateForm, ReviewForm, PlaceOrderForm
-from .models import Cart, Review, Userdetails, Orders
+from .models import Cart, Review, Userdetails, Orders,Address
 from seller.models import Products
 from .decorators import signin_required
 from django.utils.decorators import method_decorator
@@ -372,3 +372,120 @@ def cart_minus(request,*args,**kwargs):
     if cart.quantity<1:
         return redirect('deletecart',cart.id)
     return redirect('mycart')
+def CheckoutView(request):
+    address = Address.objects.filter(user=request.user)
+    print('data :',address)
+    print(address)
+
+    addr=[]
+    for i in address:
+        data={}
+        print(i.name)
+        data['name']=i.name
+        data['mob']=i.mob_no
+        data['address']='{}, {}, {}, {}, India, {} '.format(i.house,i.street,i.town,i.state,i.pin)
+        data['landmark']='{}'.format(i.landmark)
+        data['id']=i.id
+        addr.append(data)
+    print('addresses :', addr)
+    context = {
+                'address':addr
+            }
+    if request.method == "POST":
+        print(request.POST)
+        x=request.POST
+        new_address=Address()
+        new_address.user=request.user
+        new_address.name=x['name']
+        new_address.mob_no=x['mob_no']
+        new_address.house=x['house']
+        new_address.street=x['street_address']
+        new_address.town=x['town']
+        new_address.state=x['state']
+        new_address.pin=x['pin']
+        new_address.landmark=x['landmark']
+        if( Address.objects.filter(house=x['house'],pin=x['pin']).exists()):
+            print('already exists')
+        else:
+            new_address.save()
+            print(new_address.street)
+            return redirect("checkout")
+    return render(request, 'checkout.html', context)
+
+def summery(request,*args,**kwargs):
+    print(kwargs.get('id'))
+    print(request.user)
+    cart_item=Cart.objects.filter(user=request.user,status='ordernotplaced')
+
+    for i in cart_item:
+        print(Products.objects.get(id=i.product.id).id)
+        order=Orders()
+        if(Orders.objects.filter(product=Products.objects.get(id=i.product.id),user=request.user)).exists():
+            print('already exists')
+        else:
+            order.product=Products.objects.get(id=i.product.id)
+            order.user=request.user
+            order.seller=Products.objects.get(id=i.product.id).user
+            address=Address.objects.get(id=kwargs.get('id'))
+            ad='{},{},{}, {}, {}, {}, India, {} '.format(address.name,address.mob_no,address.house,address.street,address.town,address.state,address.pin,address.landmark)
+            order.address=ad
+            order.save()
+            print(order.date)
+            print("saved")
+    address = Orders.objects.get(user=request.user,id=kwargs.get('id')).address
+    print(address)
+    print("hi")
+    sum=0
+    data=[]
+    for i in cart_item:
+        content={}
+        product=Products.objects.get(id=i.product_id)
+        print(Products.objects.get(id=i.product_id).image.url)
+        content['image']=product.image.url
+        content['name']=product.product_name.capitalize()
+        content['color']=product.color
+        content['seller']=product.user
+        content['price']=product.price
+        content['offer']=product.offer
+        sum += product.price
+        data.append(content)
+
+    return render(request,'order_summery.html',{'data':data,'address':address,'sum':sum})
+
+class DeleteAddress(TemplateView):
+    def get(self, request, *args, **kwargs):
+        id = kwargs['pk']
+        address = Address.objects.get(id=id)
+        address.delete()
+        return redirect('checkout')
+
+def editaddress(request,*args,**kwargs):
+    id = kwargs['id']
+    address = Address.objects.get(user=request.user,id=id)
+    print(address.name)
+    context={'address': address}
+
+    if request.method=="POST":
+        print(request.POST)
+        x = request.POST
+        new_address = Address.objects.get(user=request.user,id=id)
+        new_address.user = request.user
+        new_address.name = x['name']
+        new_address.mob_no = x['mob_no']
+        new_address.house = x['house']
+        new_address.street = x['street_address']
+        new_address.town = x['town']
+        new_address.state = x['state']
+        new_address.pin = x['pin']
+        new_address.landmark = x['landmark']
+        if (Address.objects.filter(house=x['house'], pin=x['pin']).exists()):
+            print('already exists')
+        else:
+            new_address.save()
+            print(new_address.street)
+            return redirect("checkout")
+    return render(request, 'editaddress.html', context)
+
+
+
+
