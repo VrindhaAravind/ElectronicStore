@@ -38,4 +38,6 @@ urlpatterns = [
     path('summery/<int:id>',views.summery,name='summery'),
     path('deleteaddress/<int:pk>',views.DeleteAddress.as_view(),name='deleteaddress'),
     path('editaddress/int<id>',views.editaddress,name='editaddress')
+    path("order/proceed",views.GatewayView.as_view(),name="index"),
+    path("payment", views.charge, name="payment"),
 ]
