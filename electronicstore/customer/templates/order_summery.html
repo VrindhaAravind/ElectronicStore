@@ -26,6 +26,7 @@
                 <h5 class="">{{d.name}}</h5>
                 <h7 style="color:grey; ">{{d.color}}</h7>
                 <h6 style="color:grey;">Seller  : {{d.seller}}</h6>
+                <h6>Qty: {{d.quantity}}</h6>
                 <h5>&#8377; {{d.price}}  <span style="color:green; font-size:15px"> {{d.offer}} % Off</span></h5>
 
             </div>
@@ -39,7 +40,7 @@
             <div class="col-3" >
                 <h5>Deliverde to:</h5>
                 <p>{{address}}</p>
-                <p><b>Totla for (No. of items) :</b><br> &#8377; {{sum}}</p>
+                <p><b>Total for ({{qty}} Items)  :</b><br> &#8377; {{sum}}</p>
             </div>
         </div>
 
