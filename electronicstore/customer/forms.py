@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from django.forms import ModelForm
-from .models import Userdetails,Review
+from .models import Userdetails,Review,Orders
 
 
 class RegistrationForm(UserCreationForm):
