@@ -24,20 +24,32 @@ class Cart(models.Model):
                )
     status = models.CharField(max_length=120, choices=options, default="ordernotplaced")c
 
-
 class Orders(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    user = models.CharField(max_length=120)
-    address = models.CharField(max_length=250)
-    options = (
-        ("ordered", "ordered"),
-        ("packed", "packed"),
-        ("shipped", "shipped"),
-        ("delivered", "delivered"),
-        ("cancelled", "cancelled")
+    product=models.ForeignKey(Products,on_delete=models.CASCADE)
+    user=models.CharField(max_length=120)
+    address=models.TextField()
+    seller = models.CharField(max_length=250,default=None)
+    options=(
+        ('pending','pending'),
+        ("ordered","ordered"),
+        ("packed","packed"),
+        ("shipped","shipped"),
+        ("delivered","delivered"),
+        ("cancelled","cancelled")
     )
-    status = models.CharField(max_length=120, choices=options, default="ordered")
-    date = models.DateField(auto_now=True)
+    status=models.CharField(max_length=120,choices=options,default="pending")
+    date=models.DateField(auto_now=True)
+    
+ class Address(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    name=models.CharField(max_length=100)
+    mob_no=models.CharField(max_length=30)
+    house=models.CharField(max_length=150)
+    street=models.CharField(max_length=150)
+    town=models.CharField(max_length=100)
+    state=models.CharField(max_length=100)
+    pin=models.CharField(max_length=30)
+    landmark=models.CharField(max_length=150)
 
 
 class Review(models.Model):
