@@ -29,6 +29,7 @@ class Orders(models.Model):
     user=models.CharField(max_length=120)
     address=models.TextField()
     seller = models.CharField(max_length=250,default=None)
+    quantity = models.IntegerField(default=1)
     options=(
         ('pending','pending'),
         ("ordered","ordered"),
