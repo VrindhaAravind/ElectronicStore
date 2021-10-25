@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Seller_Details,Products,ProductImage
+from .models import Seller_Details,Products,ProductImage,Brand
 from customer.models import Orders
 
 class UserForm(UserCreationForm):
@@ -97,4 +97,13 @@ class ImageForm(forms.ModelForm):
 
         widgets = {
             'images':forms.FileInput(attrs={'multiple':True})
+        }
+        
+        
+class BrandCreationForm(forms.ModelForm):
+    class Meta:
+        model = Brand
+        fields = "__all__"
+        widgets = {
+            'brand_name':forms.TextInput(attrs={'class':'form-control'})
         }

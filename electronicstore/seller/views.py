@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .forms import UserForm,ProfileForm,LoginForm,ProductAddForm,UpdateOrderForm,ImageForm
+from .forms import UserForm,ProfileForm,LoginForm,ProductAddForm,UpdateOrderForm,ImageForm,BrandCreationForm
 from .models import Seller_Details
 from django.contrib.auth import authenticate,logout,login
 from django.contrib.auth.models import User,auth
@@ -81,7 +81,50 @@ def seller_logout(request):
     else:
         return redirect('seller_login')
     
+def create_brand(request):
+    form = BrandCreationForm()
+    context = {'form':form}
+    if request.POST:
+        form = BrandCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('base')
+    return render(request,'create_brand.html',context)
+                                     
+def get_brand(id):
+    return models.Brand.objects.get(id=id)
+
+def brand_list(request):
+
+    brands = models.Brand.objects.all()
+    context={'brands':brands}
     
+    return render(request,'brand_list.html',context)
+
+def delete_brand(request,id):
+    brand = get_brand(id)
+    brand.delete()
+    return redirect('brand_list')
+
+def edit_brand(request,id):
+    
+    brand = get_brand(id)
+    form = BrandCreationForm(instance=brand)
+    context = {'form':form}
+    if request.method == "POST":
+        brand = get_brand(id)
+        form = BrandCreationForm(instance=brand,data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('brand_list')
+        else:
+            form = BrandCreationForm(request.POST)
+            context={'form':form}
+            print(form.errors)
+            return render(request,'edit_brand.html',context)
+    return render(request, 'edit_brand.html', context)
+
+
 def add_product(request):
     
     form = ProductAddForm()

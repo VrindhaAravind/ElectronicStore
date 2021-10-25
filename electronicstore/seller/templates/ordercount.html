@@ -7,8 +7,17 @@
 
 </head>
 <body>
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4"></div>
+        <div class="col-4 text-end">
+            <a href="{%url 'base'%}" class="btn btn-dark">Home</a>
+        </div>
+    </div>
+</div>
 <div class="row mt-5">
-    <div class="col-4">
+    <div class="col-lg-4 col-md-12 col-sm-12">
         <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -20,27 +29,10 @@
           <table class="table">
               {%for order in orders%}
                 <tr>
-                    <td>{{order.product.product_name}}</td>
-                    <td>{{order.status}}</td>
-                    <td>{{order.user}}</td>
+                    <th>Product</th>
+                    <th>Status</th>
+                    <th>User</th>
                 </tr>
-              {%endfor%}
-          </table>
-      </div>
-    </div>
-  </div>
-    </div>
-    <div class="col-4">
-        <div class="accordion-item">
-    <h2 class="accordion-header" id="headingTwo">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-        Total Shipped Items:{{orders_shipped_count}}
-      </button>
-    </h2>
-    <div id="collapseTwo" class="accordion-collapse " aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-      <div class="accordion-body">
-         <table class="table">
-              {%for order in orders_shipped%}
                 <tr>
                     <td>{{order.product.product_name}}</td>
                     <td>{{order.status}}</td>
@@ -52,7 +44,34 @@
     </div>
   </div>
     </div>
- <div class="col-4">
+    <div class="col-lg-4 col-md-12 col-sm-12">
+        <div class="accordion-item">
+    <h2 class="accordion-header" id="headingTwo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Total Shipped Items:{{orders_shipped_count}}
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse " aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+         <table class="table">
+              {%for order in orders_shipped%}
+                 <tr>
+                    <th>Product</th>
+                    <th>Status</th>
+                    <th>User</th>
+                </tr>
+                <tr>
+                    <td>{{order.product.product_name}}</td>
+                    <td>{{order.status}}</td>
+                    <td>{{order.user}}</td>
+                </tr>
+              {%endfor%}
+          </table>
+      </div>
+    </div>
+  </div>
+    </div>
+ <div class="col-lg-4 col-md-12 col-sm-12">
         <div class="accordion-item">
     <h2 class="accordion-header" id="headingThree">
       <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
@@ -63,6 +82,11 @@
       <div class="accordion-body">
          <table class="table">
               {%for order in orders_packed%}
+                 <tr>
+                    <th>Product</th>
+                    <th>Status</th>
+                    <th>User</th>
+                </tr>
                 <tr>
                     <td>{{order.product.product_name}}</td>
                     <td>{{order.status}}</td>

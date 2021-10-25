@@ -36,7 +36,9 @@ class Orders(models.Model):
     )
     status=models.CharField(max_length=120,choices=options,default="ordered")
     date=models.DateField(auto_now=True)
-    
+
+    def __str__(self):
+        return self.product.product_name
     
 
 
