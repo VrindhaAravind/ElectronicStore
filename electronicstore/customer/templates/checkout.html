@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +31,7 @@
               <label class="form-check-label" for="radio1">
                   <input type="radio" class="form-check-input mr-auto radio1" id="radio1" name="radioaddress" data-id={{ad.id}} value={{ad.id}} ><b style="align:left">{{ad.name}}</b>,<span style="margin-left:100px"><b >Mob No. {{ad.mob}}</b></span><br> <span >{{ad.address}}<br>Landmark: {{ad.landmark}}</span>
               </label><br><br>
-                <a href="{%url 'editaddress' ad.id %}" class="btn btn-danger">Edit Address</a>
+                <a href="{%url 'editaddress' ad.id %}" id="{{ad.id}}edit" class="edit btn btn-danger" style="display:none">Edit Address</a>
               <button type="button" class="btn address_select" id={{ad.id}} style="font-weight:bold; color:white; background-color:orange; display:none;text-decoration: none" name="address_id" value={{ad.id}}><a href= {% url 'summery' ad.id %} style="text-decoration: none;color:white" name="address_id" value={{ad.id}}>Select this address</a></button>
 
             </div>
@@ -145,7 +144,9 @@
 <!--            alert(x)-->
             $('#add_address').hide()
             $('.address_select').hide()
+            $('.edit').hide()
             $('#'+x).show()
+            $('#'+x+'edit').show()
         });
         $('.address_select').click(function(){
 <!--            alert((this).value)-->
