@@ -40,4 +40,7 @@ urlpatterns = [
     path('editaddress/int<id>',views.editaddress,name='editaddress')
     path("order/proceed",views.GatewayView.as_view(),name="index"),
     path("payment", views.charge, name="payment"),
+    path('editreview/<int:pk>',views.EditReview.as_view(),name='editreview'),
+    path('customerservice',views.CustomerServiceView.as_view(),name='customerservice'),
+    path('customerservice/<int:pk>',views.ViewService.as_view(),name='viewservice')
 ]
