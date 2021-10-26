@@ -96,17 +96,17 @@
         </div>
 
 
-              <div class=" mb-4 col" style="width:40%">
-<!--                <label for="pin">Zip</label>-->
-                <input type="text" name="pin" class="form-control" id="pin" placeholder="Pin code..." >
-                <div class="invalid-feedback">
-                  Zip code required.
-                </div>
+          <div class=" mb-4 col" style="width:40%">
+    <!--                <label for="pin">Zip</label>-->
+            <input value="{{address.pin}}" type="text" name="pin" class="form-control" id="pin" placeholder="Pin code..." >
+            <div class="invalid-feedback">
+              Zip code required.
+            </div>
                </div>
               </div>
                 <div class="md-form mb-3">
 <!--                <label for="street_address" class="">Street address :</label>-->
-                    <input type="text" name="landmark" id="landmark" class="form-control" placeholder="Landmark (optional)" >
+                    <input value="{{address.landmark}}" type="text" name="landmark" id="landmark" class="form-control" placeholder="Landmark (optional)" >
                 </div>
                 <a href="{%url 'deleteaddress' address.id %}" class="btn btn-danger btn-lg btn-block">Delete Address</a>
                 <button class="btn btn-primary btn-lg btn-block "  type="submit">Update address</button>
