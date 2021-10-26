@@ -38,9 +38,17 @@
         {% endfor %}
             </div>
             <div class="col-3" >
-                <h5>Deliverde to:</h5>
-                <p>{{address}}</p>
-                <p><b>Total for ({{qty}} Items)  :</b><br> &#8377; {{sum}}</p>
+                <div class="card" style="width: 16rem;margin-top:1rem;margin-left:0">
+                      <div class="card-body">
+                        <h5 class="card-title">Deliverde to:</h5>
+                        <p class="card-text">{{address}}</p>
+                          <hr>
+                          <p><b>Total for ({{qty}} Items)  :</b><br> &#8377; {{sum}}</p>
+                      </div>
+                    </div>
+<!--                <h5>Deliverde to:</h5>-->
+<!--                <p>{{address}}</p>-->
+<!--                <p><b>Total for ({{qty}} Items)  :</b><br> &#8377; {{sum}}</p>-->
             </div>
         </div>
 
