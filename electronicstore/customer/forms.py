@@ -53,3 +53,7 @@ class PlaceOrderForm(forms.Form):
 
 class ReviewForm(forms.Form):
     review=forms.CharField(widget=forms.Textarea(attrs={'class': "form-control"}))
+    
+class CustomerServiceForm(forms.Form):
+    subject=forms.CharField()
+    message=forms.CharField(widget=forms.Textarea())
