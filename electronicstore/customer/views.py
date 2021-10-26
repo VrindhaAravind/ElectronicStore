@@ -529,3 +529,57 @@ def charge(request):
 
         return render(request, 'payment.html',charge)
     return render(request, 'payment.html')
+
+
+class EditReview(TemplateView):
+    template_name = 'editreview.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        id=kwargs['pk']
+        my_review=Review.objects.get(id=id)
+        instance={
+            'review':my_review.review
+        }
+        form=ReviewForm(initial=instance)
+        brands=Brand.objects.all()
+        self.context['form']=form
+        self.context['brands']=brands
+        return render(request,self.template_name,self.context)
+
+    def post(self, request, *args, **kwargs):
+        id = kwargs['pk']
+        my_review = Review.objects.get(id=id)
+        form=ReviewForm(request.POST)
+        if form.is_valid():
+            review=form.cleaned_data.get('review')
+            my_review.review=review
+            my_review.save()
+            return redirect('viewproduct',my_review.product.id)
+
+
+class CustomerServiceView(TemplateView):
+    template_name = 'customerservice.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        form=CustomerServiceForm()
+        services=CustomerService.objects.filter(user=request.user)
+        brands=Brand.objects.all()
+        self.context['form']=form
+        self.context['services']=services
+        self.context['brands']=brands
+        return render(request,self.template_name,self.context)
+
+    def post(self, request, *args, **kwargs):
+        form=CustomerServiceForm(request.POST)
+        if form.is_valid():
+            subject=form.cleaned_data.get('subject')
+            message=form.cleaned_data.get('message')
+            service=CustomerService(user=request.user,subject=subject,message=message)
+            service.save()
+            return redirect('customer_home')
+
+
+class ViewService(DetailView):
+    template_name = 'viewservice.html'
+    model = CustomerService
+    context_object_name = 'service'
