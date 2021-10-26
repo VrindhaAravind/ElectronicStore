@@ -2,15 +2,19 @@ from django.shortcuts import render, redirect,reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView,ListView, DetailView, CreateView, UpdateView
-from .forms import RegistrationForm,LoginForm,UpdateForm,ReviewForm,PlaceOrderForm,UserAddressForm,UserForm
+from .forms import RegistrationForm,LoginForm,UpdateForm,ReviewForm,PlaceOrderForm,UserForm
 from .models import Cart,Review,Orders,Address,Userdetails
-from seller.models import Products
+from seller.models import Products,Brand
 from .decorators import signin_required
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
-from django.db.models import IntegerField, Case, Value, When
+from django.db.models import IntegerField, Case, Value, When,Sum
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
+import stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 class RegistrationView(TemplateView):
     form_class = RegistrationForm
@@ -115,41 +119,41 @@ def price_high_to_low(request):
     context = {'high': high}
     return render(request, 'price_range.html', context)
 
-@signin_required
-def apple(request):
-    apple = Products.objects.filter(brand='apple')
-    context = {'apple': apple}
-    return render(request, 'category.html', context)
-
-@signin_required
-def lenovo(request):
-    lenovo = Products.objects.filter(brand='lenovo')
-    context = {'lenovo': lenovo}
-    return render(request, 'category.html', context)
-
-@signin_required
-def oppo(request):
-    oppo = Products.objects.filter(brand='oppo')
-    context = {'oppo': oppo}
-    return render(request, 'category.html', context)
-
-@signin_required
-def oneplus(request):
-    oneplus = Products.objects.filter(brand='oneplus')
-    context = {'oneplus': oneplus}
-    return render(request, 'category.html', context)
-
-@signin_required
-def redmi(request):
-    redmi = Products.objects.filter(brand='redmi')
-    context = {'redmi': redmi}
-    return render(request, 'category.html', context)
-
-@signin_required
-def samsung(request):
-    samsung = Products.objects.filter(brand='samsung')
-    context = {'samsung': samsung}
-    return render(request, 'category.html', context)
+# @signin_required
+# def apple(request):
+#     apple = Products.objects.filter(brand='apple')
+#     context = {'apple': apple}
+#     return render(request, 'category.html', context)
+#
+# @signin_required
+# def lenovo(request):
+#     lenovo = Products.objects.filter(brand='lenovo')
+#     context = {'lenovo': lenovo}
+#     return render(request, 'category.html', context)
+#
+# @signin_required
+# def oppo(request):
+#     oppo = Products.objects.filter(brand='oppo')
+#     context = {'oppo': oppo}
+#     return render(request, 'category.html', context)
+#
+# @signin_required
+# def oneplus(request):
+#     oneplus = Products.objects.filter(brand='oneplus')
+#     context = {'oneplus': oneplus}
+#     return render(request, 'category.html', context)
+#
+# @signin_required
+# def redmi(request):
+#     redmi = Products.objects.filter(brand='redmi')
+#     context = {'redmi': redmi}
+#     return render(request, 'category.html', context)
+#
+# @signin_required
+# def samsung(request):
+#     samsung = Products.objects.filter(brand='samsung')
+#     context = {'samsung': samsung}
+#     return render(request, 'category.html', context)
 
 # @method_decorator(signin_required, name="dispatch")
 def ViewDetails(request):
@@ -198,12 +202,24 @@ class ViewProduct(TemplateView):
         self.context['reviews'] = reviews
         self.context['similar_products']=similar_products
         return render(request, self.template_name, self.context)
+
+def cart_count(user):
+    cnt=Cart.objects.filter(user=user,status='ordernotplaced').count()
+    return cnt
+
 @signin_required
 def add_to_cart(request, *args, **kwargs):
-    id = kwargs['pk']
+    print(kwargs)
+    id = kwargs['id']
     product = Products.objects.get(id=id)
-    cart = Cart(product=product, user=request.user)
-    cart.save()
+    if Cart.objects.filter(product=product, user=request.user, status='ordernotplaced').exists():
+        cart = Cart.objects.get(product=product, user=request.user)
+        cart.quantity += 1
+        cart.save()
+    else:
+        cart = Cart(product=product, user=request.user)
+        cart.save()
+        print('product added')
     return redirect('mycart')
 
 @method_decorator(signin_required, name="dispatch")
@@ -213,7 +229,15 @@ class MyCart(TemplateView):
 
     def get(self, request, *args, **kwargs):
         cart_products = Cart.objects.filter(user=request.user, status='ordernotplaced')
+        # total = Cart.objects.filter(status="ordernotplaced", user=request.user).aggregate(Sum('product__price'))
+        total = 0
+        for cart in cart_products:
+            total += cart.product.price * cart.quantity
+        print(total)
+
         self.context['cart_products'] = cart_products
+        self.context['total'] = total
+        # self.context['cnt']=cart_count(request.user)
         return render(request, self.template_name, self.context)
 
 @method_decorator(signin_required, name="dispatch")
@@ -246,52 +270,41 @@ class WriteReview(TemplateView):
             return redirect('viewproduct', product.id)
 @signin_required
 def place_order(request, *args, **kwargs):
-    print(kwargs)
-    id = kwargs.get("id")
-    product = Products.objects.get(id=id)
-    address = Address.objects.filter(user=request.user)
-    
+    pid = kwargs["pid"]
+    product = Products.objects.get(id=pid)
     instance = {
-        "product": product.product_name,
-        'address': address,
-
+        "product": product.product_name
     }
-    # print(instance)
     form = PlaceOrderForm(initial=instance)
-
     context = {}
+    brands = Brand.objects.all()
+    context['brands'] = brands
     context["form"] = form
 
     if request.method == "POST":
-        cid = kwargs.get("cid")
-
+        cid = kwargs["cid"]
         cart = Cart.objects.get(id=cid)
+        form = PlaceOrderForm(request.POST)
+        if form.is_valid():
+            address = form.cleaned_data.get("address")
+            product = product
+            order = Orders(address=address, product=product, user=request.user)
+            order.save()
+            cart.status = "orderplaced"
+            cart.save()
+            return redirect("customer_home")
 
-
-
-        address = request.POST.get('radioaddress')
-
-        print(address)
-        product = product
-        order = Orders(product=product, user=request.user, seller=product.user.username, address=address)
-        print(order)
-        order.save()
-
-        cart.status = "orderplaced"
-        cart.save()
-
-        return redirect("customer_home")
-
-    return render(request, "placeorder.html", {'address': address, 'product': product})
+    return render(request, "placeorder.html", context)
 @signin_required
 def view_orders(request,*args,**kwargs):
-    orders=Orders.objects.filter(user=request.user).exclude(status='cancelled')
+    orders = Orders.objects.filter(user=request.user, status="ordered")
+    brands = Brand.objects.all()
 
-    context={
-        "orders":orders,
+    context = {
+        "orders": orders,
+        "brands": brands
     }
-    print(kwargs)
-    return render(request,"vieworders.html",context)
+    return render(request, "vieworders.html", context)
 @signin_required
 def cancel_order(request,*args,**kwargs):
     id=kwargs.get("id")
@@ -300,41 +313,187 @@ def cancel_order(request,*args,**kwargs):
     order.save()
     return redirect("vieworders")
 
+class BasePage(TemplateView):
+    template_name = 'cust_base.html'
+    context = {}
 
+    def get(self, request, *args, **kwargs):
+        brands = Brand.objects.all()
+        self.context['brands'] = brands
+        return render(request, self.template_name, self.context)
 
-def add_address(request):
+class FilterByBrand(TemplateView):
+    template_name = 'brandfilter.html'
+    context={}
+    def get(self, request, *args, **kwargs):
+        id=kwargs['pk']
+        brand=Brand.objects.get(id=id)
+        products=Products.objects.filter(brand=brand)
+        self.context['products']=products
+        return render(request,self.template_name,self.context)
 
-    if request.method == 'POST':
-        address_form = UserAddressForm(data=request.POST)
-        if address_form.is_valid():
-            address_form = address_form.save(commit=False)
-            address_form.user = request.user
-            address_form.save()
-            return redirect('mycart')
-    else:
-        address_form = UserAddressForm()
-    return render(request,'add_address.html',{'form':address_form})
+def cart_plus(request,*args,**kwargs):
+    id=kwargs['pk']
+    cart=Cart.objects.get(id=id)
+    cart.quantity+=1
+    cart.save()
+    return redirect('mycart')
 
-def view_address(request):
+def cart_minus(request,*args,**kwargs):
+    id=kwargs['pk']
+    cart=Cart.objects.get(id=id)
+    cart.quantity-=1
+    cart.save()
+    if cart.quantity<1:
+        return redirect('deletecart',cart.id)
+    return redirect('mycart')
 
-    addresses = Address.objects.filter(user=request.user)
-    return render(request,'view_address.html',{'addresses':addresses})
+def CheckoutView(request):
+    address = Address.objects.filter(user=request.user)
+    print('data :',address)
+    print(address)
 
-def edit_address(request,id):
-
+    addr=[]
+    for i in address:
+        data={}
+        print(i.name)
+        data['name']=i.name
+        data['mob']=i.mob_no
+        data['address']='{}, {}, {}, {}, India, {} '.format(i.house,i.street,i.town,i.state,i.pin)
+        data['landmark']='{}'.format(i.landmark)
+        data['id']=i.id
+        addr.append(data)
+    print('addresses :', addr)
+    context = {
+                'address':addr
+            }
     if request.method == "POST":
-        address = Address.objects.get(pk=id,user=request.user)
-        address_form = UserAddressForm(instance=address,data=request.POST)
-        if address_form.is_valid():
-            address_form.save()
-            return redirect('view_address')
-    else:
-            address = Address.objects.get(pk=id, user=request.user)
-            address_form = UserAddressForm(instance=address)
+        print(request.POST)
+        x=request.POST
+        new_address=Address()
+        new_address.user=request.user
+        new_address.name=x['name']
+        new_address.mob_no=x['mob_no']
+        new_address.house=x['house']
+        new_address.street=x['street_address']
+        new_address.town=x['town']
+        new_address.state=x['state']
+        new_address.pin=x['pin']
+        new_address.landmark=x['landmark']
+        if( Address.objects.filter(house=x['house'],pin=x['pin']).exists()):
+            print('already exists')
+        else:
+            new_address.save()
+            print(new_address.street)
+            return redirect("checkout")
+    return render(request, 'checkout.html', context)
 
-    return render(request,'edit_address.html',{'form':address_form})
+def summery(request,*args,**kwargs):
+    Orders.objects.filter(user=request.user,status='pending').delete()
+    print(kwargs.get('id'))
+    print(request.user)
+    cart_item=Cart.objects.filter(user=request.user,status='ordernotplaced')
+    address = Address.objects.get(id=kwargs.get('id'))
+    ad = '{},{},{}, {}, {}, {}, India, {} '.format(address.name, address.mob_no, address.house, address.street,
+                                                   address.town, address.state, address.pin, address.landmark)
+    for i in cart_item:
+        print(Products.objects.get(id=i.product.id).id)
+        order=Orders()
+        if(Orders.objects.filter(product=Products.objects.get(id=i.product.id),user=request.user,address=ad)).exists():
+            print('already exists')
+        else:
+            order.product=Products.objects.get(id=i.product.id)
+            order.user=request.user
+            order.seller=Products.objects.get(id=i.product.id).user
+            order.address=ad
+            order.quantity=i.quantity
+            order.save()
+            print(order.date)
+            print("saved")
+    # address = Orders.objects.filter(user=request.user,status='pending')[0].address
+    print(address)
+    print("hi")
+    sum=0
+    qty=0
+    data=[]
+    for i in cart_item:
+        content={}
+        product=Products.objects.get(id=i.product_id)
+        print(Products.objects.get(id=i.product_id).image.url)
+        content['image']=product.image.url
+        content['name']=product.product_name.capitalize()
+        content['color']=product.color
+        content['seller']=product.user
+        content['price']=product.price
+        content['offer']=product.offer
+        content['quantity']=i.quantity
+        sum += (product.price*i.quantity)
+        qty+=i.quantity
+        data.append(content)
 
-def delete_address(request,id):
+    return render(request,'order_summery.html',{'data':data,'address':ad,'sum':sum,'qty':qty})
 
-    address = Address.objects.filter(pk=id,user=request.user).delete()
-    return redirect('view_address')
+class DeleteAddress(TemplateView):
+    def get(self, request, *args, **kwargs):
+        id = kwargs['pk']
+        address = Address.objects.get(id=id)
+        address.delete()
+        return redirect('checkout')
+
+def editaddress(request,*args,**kwargs):
+    id = kwargs['id']
+    address = Address.objects.get(user=request.user,id=id)
+    print(address.name)
+    context={'address': address}
+
+    if request.method=="POST":
+        print(request.POST)
+        x = request.POST
+        new_address = Address.objects.get(user=request.user,id=id)
+        new_address.user = request.user
+        new_address.name = x['name']
+        new_address.mob_no = x['mob_no']
+        new_address.house = x['house']
+        new_address.street = x['street_address']
+        new_address.town = x['town']
+        new_address.state = x['state']
+        new_address.pin = x['pin']
+        new_address.landmark = x['landmark']
+        if (Address.objects.filter(house=x['house'], pin=x['pin']).exists()):
+            print('already exists')
+        else:
+            new_address.save()
+            print(new_address.street)
+            return redirect("checkout")
+    return render(request, 'editaddress.html', context)
+
+class GatewayView(TemplateView):
+    template_name = "stripe.html"
+
+    def get_context_data(self, **kwargs):
+        total = Cart.objects.filter(status="ordernotplaced", user=self.request.user).aggregate(Sum('product__price'))
+        context = super().get_context_data(**kwargs)
+        context['total'] = total
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+        return context
+
+
+def charge(request):
+    if request.method == "POST":
+        charge = stripe.Charge.create(
+            amount=100,
+            currency="INR",
+            description="Payment of product",
+            source=request.POST['stripeToken']
+        )
+        cart_items = Cart.objects.filter(status="ordernotplaced", user=request.user)
+        ordered_items=Orders.objects.filter(status="pending",user=request.user)
+        for item in cart_items:
+            item.status="orderplaced"
+            item.product.stock=item.product.stock-item.quantity
+            # print(item.product.stock)
+        for item in ordered_items:
+            item.status="ordered"
+
+        return render(request, 'payment.html',charge)
+    return render(request, 'payment.html')

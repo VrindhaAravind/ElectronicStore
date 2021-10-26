@@ -17,6 +17,7 @@ class Userdetails(models.Model):
 class Cart(models.Model):
     product=models.ForeignKey(Products,on_delete=models.CASCADE)
     user=models.CharField(max_length=120)
+    quantity = models.IntegerField(default=1)
     options=(("ordernotplaced","ordernotplaced"),
              ("orderplaced","orderplaced")
              )
@@ -27,7 +28,9 @@ class Orders(models.Model):
     user=models.CharField(max_length=120)
     address=models.TextField()
     seller = models.CharField(max_length=250,default=None)
+    quantity = models.IntegerField(default=1)
     options=(
+        ('pending', 'pending'),
         ("ordered","ordered"),
         ("packed","packed"),
         ("shipped","shipped"),
@@ -49,17 +52,16 @@ class Review(models.Model):
     date=models.DateField(auto_now=True)
 
 
-
 class Address(models.Model):
-
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    name = models.CharField(max_length=150)
-    phone = models.CharField(max_length=50)
-    pin_code = models.CharField(max_length=50)
-    address_line = models.CharField(max_length=255)
-    address_line2 = models.CharField(max_length=255)
-    town_city = models.CharField(max_length=150)
-    delivery_instructions = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    mob_no = models.CharField(max_length=30)
+    house = models.CharField(max_length=150)
+    street = models.CharField(max_length=150)
+    town = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    pin = models.CharField(max_length=30)
+    landmark = models.CharField(max_length=150)
 
     def __str__(self):
-        return self.name+","+self.address_line+','+self.address_line2+','+self.phone+','+self.town_city+','+self.pin_code
+        return self.name

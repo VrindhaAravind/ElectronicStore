@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegistrationView,SignInView,HomePageView,ViewProduct,add_to_cart,MyCart,DeleteFromCart,WriteReview,place_order,view_orders,cancel_order,add_address,view_address,edit_address,delete_address
+from .views import RegistrationView,SignInView,HomePageView,ViewProduct,add_to_cart,MyCart,DeleteFromCart,WriteReview,place_order,view_orders,cancel_order
 from . import views
 urlpatterns=[
     path('register',RegistrationView.as_view(),name='register'),
@@ -12,27 +12,28 @@ urlpatterns=[
     path('tablets',views.tablets,name="tablets"),
     path('price_low_to_high',views.price_low_to_high,name="price_low_to_high"),
     path('price_high_to_low', views.price_high_to_low, name="price_high_to_low"),
-    path('apple', views.apple, name="apple"),
-    path('lenovo', views.lenovo, name="lenovo"),
-    path('oppo', views.oppo, name="oppo"),
-    path('oneplus', views.oneplus, name="oneplus"),
-    path('redmi', views.redmi, name="redmi"),
-    path('samsung', views.samsung, name="samsung"),
+
     path("view_profile",views.ViewDetails, name="view_profile"),
     path("edit", views.EditDetails.as_view(), name="edit_profile"),
     path('viewproduct/<int:id>',ViewProduct.as_view(),name='viewproduct'),
-    path('addtocart/<int:pk>',add_to_cart,name='addtocart'),
+    path('addtocart/<int:id>',add_to_cart,name='addtocart'),
     path('mycart',MyCart.as_view(),name='mycart'),
     path('removeitem/<int:pk>',DeleteFromCart.as_view(),name='deletecart'),
     path('review/<int:pk>',WriteReview.as_view(),name='review'),
     path("placeorder/<int:id>/<int:cid>", place_order, name="placeorder"),
     path("vieworders", view_orders, name="vieworders"),
     path("removeorder/<int:id>", cancel_order, name="removeorder"),
-    path('add_address',add_address,name='add_address'),
-    path('view_address',view_address,name='view_address'),
-    path('address/change/<int:id>',edit_address,name='edit_address'),
-    path('address/delete/<int:id>',delete_address,name='delete_address'),
     path('viewproduct/<int:id>/writereview',views.WriteReview.as_view(),name='write_review'),
+    path('brand/<int:pk>',views.FilterByBrand.as_view(),name='brandfilter'),
+    path('base',views.BasePage.as_view(),name='basepage'),
+    path('plus/<int:pk>',views.cart_plus,name='plus'),
+    path('minus/<int:pk>',views.cart_minus,name='minus'),
+    path("checkout", views.CheckoutView, name="checkout"),
+    path('summery/<int:id>',views.summery,name='summery'),
+    path('deleteaddress/<int:pk>',views.DeleteAddress.as_view(),name='deleteaddress'),
+    path('editaddress/int<id>',views.editaddress,name='editaddress'),
+    path("order/proceed",views.GatewayView.as_view(),name="index"),
+    path("payment", views.charge, name="payment"),
 
 
 

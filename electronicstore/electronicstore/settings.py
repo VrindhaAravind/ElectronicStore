@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'customer',
-    'seller'
+    'seller',
+    'Admin'
 ]
 
 MIDDLEWARE = [
@@ -125,3 +126,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STRIPE_SECRET_KEY='sk_test_51Jmh31SB4TbHbxoaguJOSuaW9rfcRu7DG92jymOy14KMwd9lqUoSUSUxjULYwGHHAlB8mMQLeHMCc8yBHJdd0NkZ00ucPm2PYV'
+STRIPE_PUBLISHABLE_KEY='pk_test_51Jmh31SB4TbHbxoaZqSDb10aOxCYBC2AfP2tiYtILjq1i7V27ropGSf0wmdWIfdhQFyrsJJkkrtBaUznxahpB421005PpBSy9h'
