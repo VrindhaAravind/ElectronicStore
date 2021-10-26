@@ -58,3 +58,13 @@ class Review(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     review = models.CharField(max_length=500)
     date = models.DateField(auto_now=True)
+    
+class CustomerService(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    subject=models.CharField(max_length=100,default=None)
+    message=models.CharField(max_length=500)
+    response=models.CharField(max_length=500,default=None,blank=True,null=True)
+    date = models.DateField(auto_now=True)
+    
+    def __str__(self):
+        return self.user.email
