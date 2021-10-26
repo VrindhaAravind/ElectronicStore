@@ -186,7 +186,9 @@ class EditDetails(TemplateView):
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            profile_form.save()
+            profile=profile_form.save(commit=False)
+            profile.user=request.user
+            profile.save()
             return HttpResponseRedirect(reverse_lazy('view_profile'))
 
         context = self.get_context_data(user_form=user_form, profile_form=profile_form)
