@@ -202,15 +202,22 @@ class ViewProduct(TemplateView):
     context = {}
 
     def get(self, request, *args, **kwargs):
+        stock_exceeded=False
         id = kwargs['id']
         product = Products.objects.get(id=id)
         reviews = Review.objects.filter(product=product)
+        my_reviews=Review.objects.filter(user=request.user,product=product)
         similar_products=Products.objects.filter(brand=product.brand,category=product.category)
-        brands = Brand.objects.all()
-        self.context['brands'] = brands
+        cart_products=Cart.objects.filter(user=request.user,status='ordernotplaced')
+        for cart in cart_products:
+            if (product == cart.product)&(product.stock == cart.quantity):
+                stock_exceeded=True
+                break
         self.context['product'] = product
         self.context['reviews'] = reviews
+        self.context['my_reviews'] = my_reviews
         self.context['similar_products']=similar_products
+        self.context['stock_exceeded']=stock_exceeded
         return render(request, self.template_name, self.context)
 
     
