@@ -444,7 +444,7 @@ def summery(request,*args,**kwargs):
     for i in cart_item:
         print(Products.objects.get(id=i.product.id).id)
         order=Orders()
-        if(Orders.objects.filter(product=Products.objects.get(id=i.product.id),user=request.user,address=ad)).exists():
+        if(Orders.objects.filter(product=Products.objects.get(id=i.product.id),user=request.user,address=ad,status='pending')).exists():
             print('already exists')
         else:
             order.product=Products.objects.get(id=i.product.id)
