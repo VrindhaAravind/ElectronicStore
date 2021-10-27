@@ -13,8 +13,12 @@
                         <b>Storage : </b>{{product.storage}}<br>
                         <b>Features : </b>{{product.description}}
                     </p>
+                    {% if stock_exceeded %}
+                    <span style="color:red;">Already added maximum product stock available into cart</span>
 
+                    {% else %}
                     <a href="{%url 'addtocart' product.id %}" class="btn btn-primary">Add to Cart</a>
+                    {% endif %}
                     <a href="{%url 'write_review' product.id%}" class="btn btn-success " style="margin-left:150px;">Write
                         Review</a>
 
