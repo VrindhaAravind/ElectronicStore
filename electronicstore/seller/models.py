@@ -17,6 +17,10 @@ class Seller_Details(models.Model):
     bank_name = models.CharField(max_length=100)
     account_number = models.IntegerField()
     ifsc_code = models.CharField(max_length=20)
+    options = (("approved", "approved"),
+               ("pending", "pending"),
+               )
+    status = models.CharField(max_length=100, choices=options, default='pending')
 
     def __str__(self):
         return self.username

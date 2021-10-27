@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView,ListView, DetailView, CreateView, UpdateView
 from .forms import RegistrationForm,LoginForm,UpdateForm,ReviewForm,PlaceOrderForm,UserForm
 from .models import Cart,Review,Orders,Address,Userdetails
-from seller.models import Products,Brand
+from seller.models import Products,Brand,ProductImage
 from .decorators import signin_required
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
@@ -68,6 +68,7 @@ class HomePageView(ListView):
         context = super(HomePageView, self).get_context_data(**kwargs)
         products = Products.objects.all()
         paginator = Paginator(products, self.paginate_by)
+        brands = Brand.objects.all()
 
         page = self.request.GET.get('page')
 
@@ -79,6 +80,7 @@ class HomePageView(ListView):
             page_products = paginator.page(paginator.num_pages)
 
         context['products'] = page_products
+        context['brands'] = brands
         return context
 
 def search(request):
@@ -96,27 +98,34 @@ def signout(request):
 @signin_required
 def mobiles(request):
     mobiles = Products.objects.filter(category='mobile')
-    context = {'mobiles': mobiles}
+    brands = Brand.objects.all()
+
+    context = {'mobiles': mobiles,'brands':brands}
     return render(request, 'category.html', context)
 @signin_required
 def laptops(request):
     laptops = Products.objects.filter(category="laptop")
-    context = {'laptops': laptops}
+    brands = Brand.objects.all()
+    context = {'laptops': laptops,'brands':brands}
+
     return render(request, 'category.html', context)
 @signin_required
 def tablets(request):
     tablets = Products.objects.filter(category="tablet")
-    context = {'tablets': tablets}
+    brands = Brand.objects.all()
+    context = {'tablets': tablets,'brands':brands}
     return render(request, 'category.html', context)
 @signin_required
 def price_low_to_high(request):
     low = Products.objects.all().order_by('price')
-    context = {'low': low}
+    brands = Brand.objects.all()
+    context = {'low': low,'brands':brands}
     return render(request, 'price_range.html', context)
 @signin_required
 def price_high_to_low(request):
     high = Products.objects.all().order_by('-price')
-    context = {'high': high}
+    brands = Brand.objects.all()
+    context = {'high': high,'brands':brands}
     return render(request, 'price_range.html', context)
 
 # @signin_required
@@ -196,11 +205,13 @@ class ViewProduct(TemplateView):
     def get(self, request, *args, **kwargs):
         id = kwargs['id']
         product = Products.objects.get(id=id)
+        photos=ProductImage.objects.filter(product=product)
         reviews = Review.objects.filter(product=product)
         similar_products=Products.objects.filter(brand=product.brand,category=product.category)
         self.context['product'] = product
         self.context['reviews'] = reviews
         self.context['similar_products']=similar_products
+        self.context['photos'] = photos
         return render(request, self.template_name, self.context)
 
 def cart_count(user):
@@ -313,14 +324,18 @@ def cancel_order(request,*args,**kwargs):
     order.save()
     return redirect("vieworders")
 
-class BasePage(TemplateView):
-    template_name = 'cust_base.html'
-    context = {}
-
-    def get(self, request, *args, **kwargs):
-        brands = Brand.objects.all()
-        self.context['brands'] = brands
-        return render(request, self.template_name, self.context)
+# class BasePage(TemplateView):
+#     template_name = 'cust_base.html'
+#     context = {}
+#     
+# 
+#     def get(self, request, *args, **kwargs):
+#         brands = Brand.objects.all()
+#         self.context['brands'] = brands
+#         return render(request, self.template_name, self.context)
+# def BasePage(request):
+#     brands = Brand.objects.all()
+#     return render(request,'cust_base.html',{'brands':brands})
 
 class FilterByBrand(TemplateView):
     template_name = 'brandfilter.html'
@@ -328,8 +343,10 @@ class FilterByBrand(TemplateView):
     def get(self, request, *args, **kwargs):
         id=kwargs['pk']
         brand=Brand.objects.get(id=id)
+        brands=Brand.objects.all()
         products=Products.objects.filter(brand=brand)
         self.context['products']=products
+        self.context['brands']=brands
         return render(request,self.template_name,self.context)
 
 def cart_plus(request,*args,**kwargs):

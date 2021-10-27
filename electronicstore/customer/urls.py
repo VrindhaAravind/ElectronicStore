@@ -25,7 +25,7 @@ urlpatterns=[
     path("removeorder/<int:id>", cancel_order, name="removeorder"),
     path('viewproduct/<int:id>/writereview',views.WriteReview.as_view(),name='write_review'),
     path('brand/<int:pk>',views.FilterByBrand.as_view(),name='brandfilter'),
-    path('base',views.BasePage.as_view(),name='basepage'),
+  
     path('plus/<int:pk>',views.cart_plus,name='plus'),
     path('minus/<int:pk>',views.cart_minus,name='minus'),
     path("checkout", views.CheckoutView, name="checkout"),
