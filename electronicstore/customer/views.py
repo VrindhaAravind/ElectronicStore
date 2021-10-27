@@ -250,8 +250,14 @@ class MyCart(TemplateView):
         # total = Cart.objects.filter(status="ordernotplaced", user=request.user).aggregate(Sum('product__price'))
         total=0
         for cart in cart_products:
+            if cart.quantity>cart.product.stock:
+                cart.quantity=cart.product.stock
+                cart.save()
+            if (cart.quantity==0)&(cart.product.stock!=0):
+                cart.quantity=1
+                cart.save()
             total+=cart.product.price*cart.quantity
-        print(total)
+        # print(total)
 
         self.context['cart_products'] = cart_products
         self.context['total']=total
