@@ -292,7 +292,7 @@ def place_order(request, *args, **kwargs):
 
 @signin_required
 def view_orders(request, *args, **kwargs):
-    orders = Orders.objects.filter(user=request.user, status="ordered")
+    orders = Orders.objects.filter(user=request.user)
     brands = Brand.objects.all()
   
 
