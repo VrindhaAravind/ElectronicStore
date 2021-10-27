@@ -3,34 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
 
-<div class="container">
-    <div class="row">
-        {% for order in orders %}
+<div class="container" style="padding-top:100px">
+    <h3 style="padding-bottom:30px">Orders</h3>
+        {% for o in orders %}
+           <table class="table table-borderless">
+               <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td style="width:300px"><img src={{o.product.image.url}} height="120px" width="120px"></td>
+                            <td width="300px">
+                                <b>{{o.product.product_name}}</b>
+                                <p class="pt-3" style="font-size:14px;color:grey">Color:{{o.product.color}}</p>
+                                <p class="pt" style="font-size:14px;color:grey">Seller:{{o.seller}}</p>
+                            </td>
+                            <td width="300px">
+                                Price :<b>{{o.product.price}}</b><br>
 
-        <div class="card mb-3" style="max-width: 600px;">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img style="height:200px" src="{{order.product.image.url}}" alt="...">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title">{{order.product.mobile_name}}</h5>
-        <p class="card-text">{{order.product.price}}</p>
-        <p class="card-text">{{order.status}}</p>
-          <a href="{%url 'removeorder' order.id %}" class="btn btn-danger">Cancel Order</a>
-         <a href="" class="btn btn-primary">Track Package</a>
-      </div>
-    </div>
-  </div>
-</div>
+                                Qty: <b>{{o.quantity}} </b> (nos.)
+                                <p class="pt-2" style="font-size:14px;color:grey">Ordered on: <span style="color:green ;font-weight:bold">{{o.date}}</span></p>
+                            </td>
+                            <td width="300px"  >
+                                <b  class="status" data-id={{o.id}}>{{o.status}}</b>
+                                <a id=return{{o.id}} style='text-decoration:none; display:none' class="pl-3" href='#'><button type='button' class='btn btn-outline-danger'>Return Order</button></a>
+                                {% if o.status == 'ordered'%}
+                                <a id=cancel{{o.id}} style='text-decoration:none; display:none' class="pl-3" href="{%url 'removeorder' o.id%}"><button type='button' class='btn btn-outline-danger'>Cancel Order</button></a>
+                                {%endif%}
+                                <div class="pt-2" id=eta{{o.id}} > </div>
+                            </td>
 
+                        </tr>
+                    </tbody>
+               </table>
+           </table>
         {% endfor %}
+
     </div>
-</div>
-
-
+<script>
+$(document).ready(function(){
+<!--    alert('hy1')-->
+       $(".status").each(function(){
+<!--            alert($(this).text())-->
+            let x=$(this).data('id')
+            let z=$(this).text()
+<!--            alert(z.length)-->
+            if(z == 'delivered')
+            {
+<!--                alert('delivered inside' )-->
+                 $("#return"+x).show()
+                 document.getElementById("eta"+x).innerHTML = 'Product Delivered on: xx/xx/xxxx';
+            }
+            else
+            {
+<!--                alert('hello')-->
+                $("#cancel"+x).show()
+                document.getElementById("eta"+x).innerHTML = 'Estimated Delivered on: xx/xx/xxxx';
+            }
+       });
+});
+</script>
 </body>
 </html>
