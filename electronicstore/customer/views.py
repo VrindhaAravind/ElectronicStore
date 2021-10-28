@@ -83,6 +83,7 @@ class HomePageView(ListView):
         return context
 
 
+@method_decorator(signin_required, name="dispatch")
 class BasePage(TemplateView):
     template_name = 'cust_base.html'
     context = {}
@@ -94,6 +95,7 @@ class BasePage(TemplateView):
         return render(request, self.template_name, self.context)
 
 
+@signin_required
 def search(request):
     search = request.GET['q']
     product = Products.objects.filter(product_name__icontains=search)
@@ -102,41 +104,42 @@ def search(request):
     return render(request, 'search.html', context)
 
 
+@signin_required
 def mobiles(request):
     mobiles = Products.objects.filter(category='mobile')
     brands = Brand.objects.all()
     context = {'mobiles': mobiles, "brands": brands}
     return render(request, 'category.html', context)
 
-
+@signin_required
 def laptops(request):
     laptops = Products.objects.filter(category="laptop")
     brands = Brand.objects.all()
     context = {'laptops': laptops, "brands": brands}
     return render(request, 'category.html', context)
 
-
+@signin_required
 def tablets(request):
     tablets = Products.objects.filter(category="tablet")
     brands = Brand.objects.all()
     context = {'tablets': tablets, "brands": brands}
     return render(request, 'category.html', context)
 
-
+@signin_required
 def price_low_to_high(request):
     low = Products.objects.all().order_by('price')
     brands = Brand.objects.all()
     context = {'low': low, "brands": brands}
     return render(request, 'category.html', context)
 
-
+@signin_required
 def price_high_to_low(request):
     high = Products.objects.all().order_by('-price')
     brands = Brand.objects.all()
     context = {'high': high, "brands": brands}
     return render(request, 'category.html', context)
 
-
+@signin_required
 def brandfilter(request, id):
     brand = Brand.objects.get(id=id)
     brands = Brand.objects.all()
@@ -145,6 +148,7 @@ def brandfilter(request, id):
     return render(request, "category.html", context)
 
 
+@method_decorator(signin_required, name="dispatch")
 class EditDetails(TemplateView):
     user_form = UserForm
     profile_form = UpdateForm
@@ -175,6 +179,7 @@ class EditDetails(TemplateView):
         return self.render_to_response(context)
 
 
+@method_decorator(signin_required, name="dispatch")
 class ViewDetails(TemplateView):
     template_name = "my_profile.html"
     context = {}
@@ -234,15 +239,12 @@ def add_to_cart(request, *args, **kwargs):
     return redirect('mycart')
 
 
-5
-
-
-@method_decorator(signin_required, name="dispatch")
+@signin_required
 def cart_count(user):
     cnt = Cart.objects.filter(user=user, status='ordernotplaced').count()
     return cnt
 
-
+@method_decorator(signin_required, name="dispatch")
 class MyCart(TemplateView):
     template_name = 'cart.html'
     context = {}
@@ -266,7 +268,7 @@ class MyCart(TemplateView):
         # self.context['cnt']=cart_count(request.user)
         return render(request, self.template_name, self.context)
 
-
+@signin_required
 def cart_plus(request, *args, **kwargs):
     id = kwargs['pk']
     cart = Cart.objects.get(id=id)
@@ -274,7 +276,7 @@ def cart_plus(request, *args, **kwargs):
     cart.save()
     return redirect('mycart')
 
-
+@signin_required
 def cart_minus(request, *args, **kwargs):
     id = kwargs['pk']
     cart = Cart.objects.get(id=id)
@@ -294,6 +296,7 @@ class DeleteFromCart(TemplateView):
         return redirect('mycart')
 
 
+@method_decorator(signin_required, name="dispatch")
 class WriteReview(TemplateView):
     template_name = 'review.html'
     context = {}
@@ -314,6 +317,7 @@ class WriteReview(TemplateView):
             return redirect('viewproduct', product.id)
 
 
+@method_decorator(signin_required, name="dispatch")
 class EditReview(TemplateView):
     template_name = 'editreview.html'
     context = {}
@@ -341,6 +345,7 @@ class EditReview(TemplateView):
             return redirect('viewproduct', my_review.product.id)
 
 
+@method_decorator(signin_required, name="dispatch")
 class CustomerServiceView(TemplateView):
     template_name = 'customerservice.html'
     context = {}
@@ -364,12 +369,13 @@ class CustomerServiceView(TemplateView):
             return redirect('customer_home')
 
 
+@method_decorator(signin_required, name="dispatch")
 class ViewService(DetailView):
     template_name = 'viewservice.html'
     model = CustomerService
     context_object_name = 'service'
 
-
+@signin_required
 def CheckoutView(request):
     address = Address.objects.filter(user=request.user)
     print('data :', address)
@@ -411,6 +417,7 @@ def CheckoutView(request):
     return render(request, 'checkout.html', context)
 
 
+@signin_required
 def summery(request, *args, **kwargs):
     Orders.objects.filter(user=request.user, status='pending').delete()
     print(kwargs.get('id'))
@@ -465,7 +472,7 @@ class DeleteAddress(TemplateView):
         address.delete()
         return redirect('checkout')
 
-
+@signin_required
 def editaddress(request, *args, **kwargs):
     id = kwargs['id']
     address = Address.objects.get(user=request.user, id=id)
@@ -494,6 +501,7 @@ def editaddress(request, *args, **kwargs):
     return render(request, 'editaddress.html', context)
 
 
+@method_decorator(signin_required, name="dispatch")
 class GatewayView(TemplateView):
     template_name = "stripe.html"
 
@@ -510,7 +518,7 @@ class GatewayView(TemplateView):
         context['key'] = settings.STRIPE_PUBLISHABLE_KEY
         return context
 
-
+@signin_required
 def charge(request):
     if request.method == "POST":
         charge = stripe.Charge.create(
@@ -532,7 +540,7 @@ def charge(request):
         return render(request, 'payment.html', charge)
     return render(request, 'payment.html')
 
-
+@signin_required
 def cash_on_delivery(request):
     cart_items = Cart.objects.filter(status="ordernotplaced", user=request.user)
     ordered_items = Orders.objects.filter(status="pending", user=request.user)
@@ -547,6 +555,7 @@ def cash_on_delivery(request):
     return render(request, 'cod.html')
 
 
+@signin_required
 def view_orders(request, *args, **kwargs):
     orders = Orders.objects.filter(user=request.user)
     brands = Brand.objects.all()
@@ -557,6 +566,7 @@ def view_orders(request, *args, **kwargs):
     return render(request, "vieworder.html", context)
 
 
+@signin_required
 def cancel_order(request, *args, **kwargs):
     id = kwargs.get("id")
     order = Orders.objects.get(id=id)
