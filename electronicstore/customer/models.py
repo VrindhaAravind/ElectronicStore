@@ -39,6 +39,7 @@ class Orders(models.Model):
         ("cancelled", "cancelled")
     )
     status = models.CharField(max_length=120, choices=options, default="ordered")
+    price=models.FloatField(default=10000)
     date = models.DateField(auto_now=True)
 
 
