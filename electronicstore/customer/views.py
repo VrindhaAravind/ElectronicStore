@@ -438,6 +438,7 @@ def summery(request, *args, **kwargs):
             order.seller = Products.objects.get(id=i.product.id).user
             order.address = ad
             order.quantity = i.quantity
+            order.price=(i.product.price-(i.product.price*i.product.offer/100))*(i.quantity)
             order.save()
             print(order.date)
             print("saved")
