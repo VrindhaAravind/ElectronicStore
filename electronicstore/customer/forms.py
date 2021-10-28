@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from django.forms import ModelForm
-from .models import Userdetails,Review,Orders
+from .models import Userdetails, Review,Orders
 
 
 class RegistrationForm(UserCreationForm):
@@ -34,7 +34,7 @@ class UserForm(forms.ModelForm):
 
         }
 
-class UpdateForm(ModelForm):
+class UpdateForm(forms.ModelForm):
     class Meta:
         model = Userdetails
         fields = ["first_name",'last_name',"mobile_number","dob","image"]
@@ -50,10 +50,11 @@ class UpdateForm(ModelForm):
 class PlaceOrderForm(forms.Form):
     address = forms.CharField(widget=forms.Textarea(attrs={'class': "form-control"}))
     product = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}))
+    
 
 class ReviewForm(forms.Form):
     review=forms.CharField(widget=forms.Textarea(attrs={'class': "form-control"}))
-    
+
 class CustomerServiceForm(forms.Form):
-    subject=forms.CharField()
-    message=forms.CharField(widget=forms.Textarea())
+    subject=forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}))
+    message=forms.CharField(widget=forms.Textarea(attrs={'class': "form-control"}))
