@@ -1,10 +1,10 @@
 {% extends 'cust_base.html'%}
 {%block body_block%}
 <div class="container">
-    <div class="row">
+    <div class="row mt-5">
         <div class="col-6">
             <div class="card" style="">
-                <img src="{{product.image.url}}" class="card-img-top" alt="...">
+                <img src="{{product.image.url}}" class="product-detail" alt="...">
                 <div class="card-body">
                     <h5 class="card-title"><b>{{product.product_name}}</b> ( {{product.color}} ) </h5>
                     <p class="card-text"><i> <b>Rate : </b>{{product.price}}</i><br>
@@ -22,28 +22,6 @@
                     <a href="{%url 'write_review' product.id%}" class="btn btn-success " style="margin-left:150px;">Write
                         Review</a>
 
-                    <!--                     Modal-->
-                    <!--                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"-->
-                    <!--                         aria-hidden="true">-->
-                    <!--                        <div class="modal-dialog">-->
-                    <!--                            <div class="modal-content">-->
-                    <!--                                <div class="modal-header">-->
-                    <!--                                    <h5 class="modal-title" id="exampleModalLabel"><h3>Write Review</h3></h5>-->
-                    <!--                                    <button type="button" class="btn-close" data-bs-dismiss="modal"-->
-                    <!--                                            aria-label="Close"></button>-->
-                    <!--                                    <div class="modal-body">-->
-                    <!--                                        <form action="" method="POST">-->
-                    <!--                                            {%csrf_token%}-->
-                    <!--                                            {{form.as_p}}-->
-                    <!--                                            <input type="submit" value="Post">-->
-                    <!--                                        </form>-->
-
-                    <!--                                    </div>-->
-                    <!--                                </div>-->
-
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
                 </div>
             </div>
         </div>
