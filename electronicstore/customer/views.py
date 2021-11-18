@@ -8,7 +8,7 @@ from seller.models import Products
 from .decorators import signin_required
 from django.utils.decorators import method_decorator
 
-
+#Registration and signin
 
 class RegistrationView(TemplateView):
     form_class = RegistrationForm
